@@ -1,0 +1,13 @@
+---
+description: Project tooling — build, dependencies, versioning, optional checks.
+globs: "**/pyproject.toml"
+alwaysApply: false
+---
+
+# Tooling
+
+- **Build:** Use Hatch (hatchling) as the build backend for new Python packages. Poetry is acceptable in existing repos that already use it.
+- **Dependencies:** Prefer uv for dependency management and virtual environments. Declare dependencies in `pyproject.toml` under `[project]` (PEP 621) with optional `[dependency-groups]` or `[project.optional-dependencies]` for dev/check deps.
+- **Versioning:** Use Commitizen for version bumps. Typical config: `version_scheme = "semver"`, `tag_format = "v$version"`, `version_provider = "scm"`, `version_files = ["pyproject.toml:^version"]`, `bump_message = "bump(version): $current_version -> $new_version"`.
+- **Package layout:** Use `[tool.hatch.build.targets.wheel] packages = ["src/<package_name>"]` so the package lives under `src/`.
+- **Optional checks:** In newer projects, include in dev/check dependency groups: mypy, ruff, pytest, pytest-cov, pytest-xdist, and optionally invoke for task running. Run these in CI.

@@ -1,0 +1,31 @@
+x-common-infra: &common-infra
+  networks:
+    - data-integration-pipeline-network
+  env_file:
+    - config/env_files/dev.env
+
+services:
+  postgres:
+    <<: *common-infra
+    container_name: data-integration-pipeline-comp-postgres
+    image: postgres:16.4-bullseye
+    shm_size: 1g
+    ports:
+      - ${POSTGRES_HOST}:${POSTGRES_PORT}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgresql.conf:/etc/postgresql.conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "data"]
+
+
+networks:
+  data-integration-pipeline-network:
+    name: data-integration-pipeline-network
+
+volumes:
+  postgres_data:

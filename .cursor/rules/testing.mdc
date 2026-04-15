@@ -1,0 +1,14 @@
+---
+description: Testing with pytest; test layout, annotations, docstrings, fixtures.
+globs: "**/tests/**/*.py"
+alwaysApply: false
+---
+
+# Testing
+
+- **Framework:** Use pytest only; do not use the unittest module.
+- **Location:** Place tests under `./tests`. Create `__init__.py` under `tests` and subpackages if the project uses package-style tests.
+- **Naming:** Test files: `test_*.py` or `*_test.py`. Test functions: `test_*`.
+- **Annotations and docstrings:** Tests should have type annotations and docstrings like production code. Use descriptive test names; docstrings can summarize the scenario.
+- **Fixtures:** Use pytest fixtures for shared setup. For type-checking fixture types, use `TYPE_CHECKING` and import: `CaptureFixture`, `FixtureRequest`, `LogCaptureFixture`, `MonkeyPatch`, `MockerFixture` (e.g. from `_pytest.capture`, `_pytest.fixtures`, `pytest_mock.plugin`).
+- Prefer one logical assertion focus per test; use parametrize for multiple input/expected pairs instead of many similar test functions.

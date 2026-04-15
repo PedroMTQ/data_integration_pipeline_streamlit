@@ -1,0 +1,13 @@
+{
+  "DIP_AIRFLOW_VARS": {
+    "DIP_MAX_ACTIVE_TASKS": "2",
+    "DIP_DOCKER_IMAGE": "data_integration_pipeline:latest",
+    "DIP_S3_SENSOR_TIMEOUT": "3600",
+    "DIP_S3_SENSOR_POKE_INTERVAL": "60"
+  },
+  "DIP_S3_SENSORS": {
+    "chunk_bronze": "^bronze/.*\\.json$",
+    "process_bronze": "^chunked_bronze/.*chunk_\\d+\\.parquet$",
+    "load_bronze": "^chunked_bronze/.*_processed\\.parquet$"
+  }
+}

@@ -1,0 +1,6 @@
+services:
+  data_integration_pipeline:
+    image: data_integration_pipeline:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile

@@ -1,0 +1,14 @@
+---
+description: Jobs and pipeline units — discover vs process, single-task and batch, observable outcomes.
+globs: "**/jobs/**/*.py"
+alwaysApply: false
+---
+
+# Jobs and Pipeline Units
+
+Apply when working on job or pipeline entrypoints (e.g. under `jobs/` or similar).
+
+- **Discover vs process:** Separate “what to do” from “do one unit.” The job discovers a set of tasks (e.g. from storage, config, or prior runs) and exposes a way to process one task. This allows external schedulers to drive work and scales to “process one” or “process all.”
+- **Single-task and batch:** Provide both a way to run a single task (e.g. for a scheduler or API) and a way to run the full loop (e.g. for local or batch runs). Keep the same processing logic for both.
+- **Observable outcomes:** After processing a task, persist or return a result that describes what was done (e.g. paths, counts, status). Prefer a small result object or metadata over side effects only.
+- **No embedded domain logic:** Jobs should not implement core business rules (e.g. matching, dedup, validation). They call into common or feature modules that own that logic.

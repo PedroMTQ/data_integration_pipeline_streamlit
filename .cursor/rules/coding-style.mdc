@@ -1,0 +1,20 @@
+---
+description: Python coding style — typing, docstrings, naming, Pydantic, settings, imports.
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Coding Style
+
+- **Type annotations:** Add type annotations to all functions, methods, and class members. Include return types. Use specific types (e.g. `list[str]`, `Optional[T]`, `Iterable[dict]`) rather than bare `list` or `dict` where possible.
+- **Docstrings:** Add descriptive docstrings to all public functions and classes. Follow PEP 257 (one-line or summary + details). Module-level docstrings for non-trivial modules.
+- **Comments:** When editing a file, keep any existing comments that are still accurate; do not remove them for brevity.
+- **Naming:** Use `snake_case` for functions, variables, and constants; `PascalCase` for classes; `UPPER_SNAKE` for module-level constants (e.g. in settings).
+- **Structured data:** Use Pydantic for configuration, metadata, and any data that crosses module or process boundaries. Use `Field(description=...)` and sensible defaults so the schema is self-describing.
+- **Factory methods:** For instances that depend on context (e.g. paths, run id), prefer a class method like `create(...)` that gathers context and returns a fully formed instance. Callers pass only what’s needed.
+- **Central settings:** Keep environment variables and global constants in one settings (or config) module. Domain and IO code **import** from it; do not call `os.getenv` or use magic strings in domain/IO code.
+- **Imports:** Use absolute imports from the package root (e.g. `from my_pkg.common.io.s3_client import S3Client`). Avoid circular imports: e.g. metadata/io may depend on settings, not on jobs or heavy domain logic; use raw dicts or lazy imports if needed.
+- **Logging:** Use a shared logger (e.g. from a common utils package); avoid raw `print` for production behavior. Use appropriate levels (debug, info, warning, error).
+- **Human-readable state:** For metadata and key domain objects, implement `__str__` (or equivalent) so logs and debugging are readable without inspecting raw dicts.
+- **Keyword arguments:** No space around `=` in keyword arguments in function calls (e.g. `foo(bar=1)`, not `foo(bar = 1)`). **SUGGESTION:** Use named arguments for calls with more than two arguments to improve readability.
+- **String concenation** Use f-strings and never use string formatting 

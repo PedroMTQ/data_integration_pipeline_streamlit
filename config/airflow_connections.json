@@ -1,0 +1,32 @@
+{
+  "dip_s3_connection": {
+    "conn_type": "aws",
+    "login": "user123",
+    "password": "password123",
+    "extra_dejson": {
+      "endpoint_url": "http://data-integration-pipeline-comp-minio:9000"
+    }
+  },
+  "dip_pg_connection": {
+    "conn_type": "postgres",
+    "host": "data-integration-pipeline-comp-postgres",
+    "port": 5432,
+    "login": "fake_user",
+    "password": "fake_password",
+    "schema": "data_integration_pipeline"
+  },
+  "dip_es_connection": {
+    "conn_type": "elasticsearch",
+    "host": "https://es01:9200",
+    "login": "elastic",
+    "password": "elastic123",
+    "extra_dejson": {
+      "use_ssl": true,
+      "verify_certs": false,
+      "ssl_show_warn": false,
+      "ELASTICSEARCH_INDEX_NAME": "integrated_records_v1",
+      "ELASTICSEARCH_INDEX_ALIAS": "integrated_records",
+      "ELASTICSEARCH_NUMBER_OF_SHARDS": 2
+    }
+  }
+}

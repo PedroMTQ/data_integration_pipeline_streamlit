@@ -1,0 +1,57 @@
+site_name: Data Integration Pipeline
+site_description: End-to-end data integration pipeline documentation
+repo_url: https://github.com/PedroMTQ/data_integration_pipeline_comp
+
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - toc.integrate
+
+plugins:
+  - search
+  - mermaid-zoom
+
+extra_javascript:
+  - assets/javascripts/mermaid.min.js
+
+nav:
+  - Overview: index.md
+  - Bronze:
+      - Download Bronze: bronze/download_bronze.md
+      - Upload Bronze: bronze/upload_bronze.md
+      - Chunk Bronze: bronze/chunk_bronze.md
+      - Process Bronze: bronze/process_bronze.md
+      - Load Bronze: bronze/load_bronze.md
+      - List Bronze Errors: bronze/list_bronze_errors.md
+  - Silver:
+      - Integrate Silver: silver/integrate_silver.md
+      - Optimize Delta Tables: silver/optimize_delta_tables.md
+      - Vacuum Delta Tables: silver/vacuum_delta_tables.md
+      - Audit Silver: silver/audit_silver.md
+  - Gold:
+      - Sync Postgres: gold/sync_postgres.md
+      - Sync Elasticsearch: gold/sync_elastic_search.md
+      - Create PG Report: gold/create_pg_report.md
+      - Streamlit dashboard: gold/streamlit.md
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true

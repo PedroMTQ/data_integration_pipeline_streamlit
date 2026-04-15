@@ -1,0 +1,14 @@
+---
+description: Code formatting with Ruff; single quotes, line length, lint rules.
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Formatting
+
+- **Linter/formatter:** Use Ruff for both linting and formatting (replaces black, isort, flake8). Run `ruff check` and `ruff format`.
+- **Quotes:** Use single quotes for strings (`quote-style = "single"` in Ruff config).
+- **Line length:** Use a consistent line length in `pyproject.toml`. Common in this codebase: 150 or 250. **SUGGESTION:** Prefer 100–120 for readability when starting new projects; otherwise stick to 150 for consistency with existing repos.
+- **Ruff lint:** Enable `E`, `W`, `F`, `I`, `B`. Commonly ignore: `E501` (line length, if you rely on formatter), `E402` (module-level import after code), `B006` (mutable default args). Add others only when justified.
+- **Per-file ignores:** In `__init__.py`, ignore `E402` so imports can follow package init logic.
+- **Config location:** Put `[tool.ruff]` and `[tool.ruff.format]` in the project’s `pyproject.toml` so all tools share one config.

@@ -1,0 +1,10 @@
+---
+description: Idempotency and concurrency — safe re-runs, document single-worker vs locking assumptions.
+globs: "**/jobs/**/*.py"
+alwaysApply: false
+---
+
+# Idempotency and Concurrency
+
+- **Idempotency:** Design pipeline steps so that re-running with the same inputs is safe: same outcome, no duplicate side effects (e.g. double writes). Use "already ran" or skip logic where re-execution would be redundant.
+- **Concurrency:** If multiple workers might run the same job or touch the same resources, document whether the design assumes single-worker execution or requires locking or distributed coordination. Avoid assuming "only one runner" without stating it; add locking or guards when the design requires it.

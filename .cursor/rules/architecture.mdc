@@ -1,0 +1,23 @@
+---
+alwaysApply: true
+description: Design principles and layout — config-driven, run state, thin orchestration, common/jobs/feature structure, imports.
+globs: "**/*.py"
+---
+
+# Architecture
+
+## Design principles
+
+- **Config-driven behavior:** Prefer external config (files, env) over hardcoded logic. Load config through a single entry point (e.g. a settings or config module). Domain code should depend on injected config or settings, not on raw env or paths. No `os.getenv` or magic strings scattered in domain or IO code.
+- **Run state and outcomes as first-class:** Represent pipeline runs and their outcomes with dedicated models (e.g. metadata, metrics). Persist and resolve them explicitly so “what ran” and “what was produced” are queryable and reusable.
+- **Thin orchestration:** Job entrypoints discover work and delegate processing to domain modules; business logic lives in common or feature modules, not in job classes.
+- **Avoid hidden coupling:** Do not hardcode paths, bucket names, or env keys inside domain or IO code; centralize them and pass or import from one place.
+
+## Layout
+
+- **Base layout:** Use `core`, `io`, and `jobs` folders. If the repo has multiple separable components, use `common`, `service1` … `serviceN`, where each folder can have its own `core`, `io`, and `jobs`.
+- **common/:** Put shared IO (S3, Delta, file readers/writers), base metadata, metrics, and cross-cutting models in a `common/` package (e.g. `common/io/`, `common/core/metadata/`, `common/core/models/`). Other packages depend on common, not the reverse.
+- **jobs/:** Job entrypoints live in a top-level `jobs/` package; each job module defines the job class and `process_task` / `get_tasks` / `run` (or equivalent), and `if __name__ == '__main__'` for local runs. Jobs import from common and from feature modules.
+- **Feature modules:** Domain areas (e.g. entity_resolution, auditor, storage) live as sibling packages; each can have a `core/` subpackage for internal implementation. Expose a small public surface (e.g. config models, client classes) and keep implementation details in core.
+- **Imports:** Use absolute imports from the package root (e.g. `from data_integration_pipeline.common.io.s3_client import S3Client`). Avoid circular imports: metadata can depend on settings and io, but not on jobs or heavy domain logic; use raw dicts or lazy imports if needed for “already ran” / “latest” checks.
+- Prefer `src/<package>/` layout for installable packages so the package root is not the repo root.

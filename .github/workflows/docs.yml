@@ -1,0 +1,24 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install mkdocs mkdocs-material mkdocs-mermaid-zoom
+      - run: mkdir -p docs/assets/javascripts && curl -sL "https://cdn.jsdelivr.net/npm/mermaid@10.7.0/dist/mermaid.min.js" -o docs/assets/javascripts/mermaid.min.js
+      - run: mkdocs gh-deploy --force

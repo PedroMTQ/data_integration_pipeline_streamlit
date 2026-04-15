@@ -1,0 +1,12 @@
+---
+description: README and project docs — keep in sync with entrypoints, config, and how to run.
+globs: "**/README*.md"
+alwaysApply: false
+---
+
+# README and Documentation
+
+- **Purpose:** The README should describe what the repo does, how to run it (install, env, main commands or entrypoints), and where to find key config (e.g. env vars, config files). Keep it in sync with the code: if entrypoints or config change, update the README.
+- **Entrypoints:** Document the main ways to run the project (e.g. CLI, `if __name__ == '__main__'` in job modules, Makefile targets). Mention the package or module name so new contributors know where to start.
+- **Config and env:** List required or important environment variables and config files (or point to a config directory). Don’t duplicate full reference docs if they live elsewhere; a short summary and pointer is enough.
+- **Consistency:** Avoid describing an architecture or layout that no longer matches the code (e.g. outdated folder names or missing steps). When refactoring, update the README in the same pass.

@@ -1,0 +1,12 @@
+---
+description: Observability — structured logging, log levels, no print in production paths, metrics and tracing.
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# Observability
+
+- **Structured logging:** Use the project's shared logger (e.g. from a common utils package) with appropriate levels: debug for detail, info for normal progress, warning for recoverable issues, error for failures.
+- **No print in production paths:** In job entrypoints and pipeline code, use the logger instead of `print()` so output can be leveled, filtered, and aggregated. Reserve `print()` for one-off scripts or `if __name__ == '__main__'` debugging only.
+- **Context in logs:** Include identifiers (e.g. run_id, job name, step) in log messages or structured fields so a run can be traced across logs.
+- **Metrics and tracing:** For production, consider adding metrics (e.g. Prometheus or OTEL) for key operations and failure counts, and optional distributed tracing for multi-step pipelines.

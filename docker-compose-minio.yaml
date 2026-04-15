@@ -1,0 +1,64 @@
+x-common-infra: &common-infra
+  networks:
+    - data-integration-pipeline-network
+
+x-common-minio: &common-minio
+  image: quay.io/minio/minio:RELEASE.2025-01-20T14-49-07Z
+
+services:
+  minio:
+    <<: [*common-infra, *common-minio]
+    container_name: data-integration-pipeline-comp-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    ports:
+      - "${S3_PORT}:9000" # S3 API
+      - "9001:9001" # Web UI
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    <<: [*common-infra, *common-minio]
+    container_name: data-integration-pipeline-comp-minio-init
+    environment:
+      S3_BUCKETS: ${S3_BUCKETS}
+      S3_ALIAS: "data-integration-pipeline-comp-minio"
+      S3_URL: "http://minio:9000"
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    depends_on:
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./scripts/create-buckets.sh:/minio_init/create-buckets.sh
+      - minio-data:/data
+      - ./tmp/compose_init:/tmp/compose_init/
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        SENTINEL="/tmp/compose_init/minio_initialized"
+        if [ -f "$$SENTINEL" ]; then
+          echo "$$SENTINEL already exists. Skipping. Delete $$SENTINEL to re-initialize."
+          exit 0
+        fi
+        /bin/sh /minio_init/create-buckets.sh
+        touch "$$SENTINEL"
+
+
+
+networks:
+  data-integration-pipeline-network:
+    name: data-integration-pipeline-network
+
+volumes:
+  minio-data:
