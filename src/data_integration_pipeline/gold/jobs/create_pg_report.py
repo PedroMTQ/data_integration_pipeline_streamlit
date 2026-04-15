@@ -107,6 +107,7 @@ class CreatePostgresReportJob:
         client.execute_schema(self.REPORT_SQL)
         logger.info('View %s is ready', self.OUTPUT_POSTGRES_VIEW)
         view_data = client.read_table(self.OUTPUT_POSTGRES_VIEW)
+        view_data = view_data.select(pl.all().cast(pl.String)).transpose(include_header=True)
         view_data = view_data.transpose(include_header=True)
         with pl.Config(tbl_rows=50):
             logger.info('View data: %s', view_data)
