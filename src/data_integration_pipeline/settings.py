@@ -70,7 +70,7 @@ UNKNOWN_PARTITION_STR = 'UNKNOWN'
 # -----------------------------------------------------------------------------
 # Batching, Delta & Processing
 # -----------------------------------------------------------------------------
-DEFAULT_CHUNK_SIZE = os.getenv('DEFAULT_CHUNK_SIZE', '10000')
+DEFAULT_CHUNK_SIZE = int(os.getenv('DEFAULT_CHUNK_SIZE', '10000'))
 DELTA_CLIENT_BATCH_SIZE = int(os.getenv('DELTA_CLIENT_BATCH_SIZE', '100000'))
 
 DELTA_OPTIMIZE_TARGET_SIZE = int(os.getenv('DELTA_OPTIMIZE_TARGET_SIZE', str(100 * 1024 * 1024)))  # 100mb
@@ -127,6 +127,9 @@ STORAGE_OPTIONS = {
     'endpoint_url': S3_ENDPOINT_URL,
     'allow_http': 'true',
 }
+
+# Backend engine (silver integration join)
+ER_BACKEND_ENGINE: str = os.getenv('ER_BACKEND_ENGINE', 'duckdb')
 
 # Spark
 SPARK_APP_NAME = os.getenv('SPARK_APP_NAME', 'dip-spark')

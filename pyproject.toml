@@ -34,26 +34,26 @@ storage = [
     "data_integration_pipeline[models]",
     "deltalake",
     "psycopg[binary, pool]",
+    # 8.17.2 is the current version in prod
+    "elasticsearch>=8,<9",
 ]
-
 embedding = [
     "sentence-transformers",
     # for the model jinaai/jina-embeddings-v5-text-nano
     "transformers>=4.57.0,<5.0.0",
     "peft>=0.15.2",
 ]
-elasticsearch = [
-    "data_integration_pipeline[storage]",
-    # 8.17.2 is the current version in prod
-    "elasticsearch>=8,<9",
-]
-spark = [
+er-spark = [
     "data_integration_pipeline[storage]",
     "pyspark",
     "delta-spark",
 ]
+er-duckdb = [
+    "data_integration_pipeline[storage]",
+    "duckdb",
+]
 streamlit = [
-    "data_integration_pipeline[storage,elasticsearch]",
+    "data_integration_pipeline[storage]",
     "streamlit",
 ]
 

@@ -46,7 +46,7 @@ services:
       - /bin/sh
       - -c
       - |
-        SENTINEL="/tmp/compose_init/minio_initialized"
+        SENTINEL="/tmp/compose_init/sentinel_minio"
         if [ -f "$$SENTINEL" ]; then
           echo "$$SENTINEL already exists. Skipping. Delete $$SENTINEL to re-initialize."
           exit 0

@@ -72,6 +72,7 @@ class SparkClient:
             SparkSession.builder.appName(self._app_name)
             .master(SPARK_MASTER)
             .config('spark.driver.host', SPARK_HOST)
+            .config('spark.driver.bindAddress', SPARK_HOST)
             .config('spark.driver.memory', SPARK_DRIVER_MEMORY)
             .config('spark.executor.memory', SPARK_EXECUTOR_MEMORY)
             .config('spark.sql.extensions', 'io.delta.sql.DeltaSparkSessionExtension')

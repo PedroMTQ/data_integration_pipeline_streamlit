@@ -42,11 +42,13 @@ install:
 	if [ ! -d "$${ENV["ENV_DIR"]}" ]; then
 		echo "Installing environment for $${ENV["PACKAGE"]}..."
 		uv venv "$${ENV["ENV_DIR"]}" --python "$${ENV["PYTHON_VERSION"]}"
-		source "$${ENV["ENV_PATH"]}" && uv sync --active --all-extras
+		source scripts/load_dot_env_dev.sh 2>/dev/null || true
+		ER_EXTRA="er-$${ER_BACKEND_ENGINE:-duckdb}"
+		echo "Using ER engine: $$ER_EXTRA"
+		source "$${ENV["ENV_PATH"]}" && uv sync --active --extra models --extra auditor --extra storage --extra embedding --extra "$$ER_EXTRA" --extra streamlit
 		echo "Install complete. Use 'make activate' to activate it"
 	else
 		echo "Environment for $${ENV["PACKAGE"]} already exists at $${ENV["ENV_DIR"]}. Use 'make activate' to activate it, or 'make update' to update it."
-
 	fi
 	unset ENV
 
@@ -129,8 +131,8 @@ docker-down:
 docker-reset:
 	@echo "Stopping and removing all project containers, networks, and named volumes..."
 	docker compose --env-file $(DEV_ENV_FILE) $(COMPOSE_FILES) down -v --remove-orphans --timeout 10
-	rm -rf tmp/compose_init 
-	@echo "Docker reset complete. Run 'make docker_up' for a clean start."
+	rm -rf tmp/compose_init/sentinel_*
+	@echo "Docker reset complete. Run 'make docker-up' for a clean start."
 
 
 # these are helper functions for dev 

@@ -231,7 +231,7 @@ services:
     command:
       - -c
       - |
-        SENTINEL="/tmp/compose_init/airflow_initialized"
+        SENTINEL="/tmp/compose_init/sentinel_airflow"
         if [[ -f "$$SENTINEL" ]]; then
           echo "$$SENTINEL already exists. Skipping. Delete $$SENTINEL to re-initialize."
           exit 0

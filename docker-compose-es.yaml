@@ -7,7 +7,7 @@ services:
     user: "0"
     command: >
       bash -c '
-        SENTINEL="/tmp/compose_init/es_initialized"
+        SENTINEL="/tmp/compose_init/sentinel_es"
         if [ -f "$$SENTINEL" ]; then
           echo "$$SENTINEL already exists. Skipping init. Delete $$SENTINEL to re-initialize."
           echo "Keeping container alive so service_healthy dependency is satisfied."

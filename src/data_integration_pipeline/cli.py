@@ -18,7 +18,6 @@ def cli() -> None:
 def download_bronze() -> None:
     from data_integration_pipeline.bronze.jobs.download_bronze import DownloadBronzeJob
 
-    logger.info('Running CLI command: download-bronze')
     DownloadBronzeJob().run()
 
 
@@ -27,7 +26,6 @@ def download_bronze() -> None:
 def upload_bronze(data_source: Optional[str] = None) -> None:
     from data_integration_pipeline.bronze.jobs.upload_bronze import UploadBronzeJob
 
-    logger.info('Running CLI command: upload-bronze')
     UploadBronzeJob(data_source=data_source).run()
 
 
@@ -36,7 +34,6 @@ def upload_bronze(data_source: Optional[str] = None) -> None:
 def chunk_bronze(data_source: Optional[str] = None) -> None:
     from data_integration_pipeline.bronze.jobs.chunk_bronze import ChunkBronzeJob
 
-    logger.info('Running CLI command: chunk-bronze')
     ChunkBronzeJob(data_source=data_source).run()
 
 
@@ -45,7 +42,6 @@ def chunk_bronze(data_source: Optional[str] = None) -> None:
 def process_bronze(data_source: Optional[str] = None) -> None:
     from data_integration_pipeline.bronze.jobs.process_bronze import ProcessBronzeJob
 
-    logger.info('Running CLI command: process-bronze')
     ProcessBronzeJob(data_source=data_source).run()
 
 
@@ -54,7 +50,6 @@ def process_bronze(data_source: Optional[str] = None) -> None:
 def load_bronze(data_source: Optional[str] = None) -> None:
     from data_integration_pipeline.bronze.jobs.load_bronze import LoadBronzeJob
 
-    logger.info('Running CLI command: load-bronze')
     LoadBronzeJob(data_source=data_source).run()
 
 
@@ -65,7 +60,6 @@ def load_bronze(data_source: Optional[str] = None) -> None:
 def list_bronze_errors() -> None:
     from data_integration_pipeline.bronze.jobs.list_bronze_errors import ListBronzeErrorsJob
 
-    logger.info('Running CLI command: list-bronze-errors')
     ListBronzeErrorsJob().run()
 
 
@@ -73,7 +67,6 @@ def list_bronze_errors() -> None:
 def audit_silver() -> None:
     from data_integration_pipeline.silver.jobs.audit_silver import AuditSilverDataJob
 
-    logger.info('Running CLI command: audit-silver')
     AuditSilverDataJob().run()
 
 
@@ -81,7 +74,6 @@ def audit_silver() -> None:
 def integrate_silver() -> None:
     from data_integration_pipeline.silver.jobs.integrate_silver import IntegrateSilverJob
 
-    logger.info('Running CLI command: integrate-silver')
     IntegrateSilverJob().run()
 
 
@@ -89,7 +81,6 @@ def integrate_silver() -> None:
 def sync_postgres() -> None:
     from data_integration_pipeline.gold.jobs.sync_postgres import SyncPostgresJob
 
-    logger.info('Running CLI command: sync-pg')
     SyncPostgresJob().run()
 
 
@@ -97,7 +88,6 @@ def sync_postgres() -> None:
 def sync_es() -> None:
     from data_integration_pipeline.gold.jobs.sync_elastic_search import SyncOrganizationsElasticsearchJob
 
-    logger.info('Running CLI command: sync-es')
     SyncOrganizationsElasticsearchJob().run()
 
 
@@ -105,7 +95,6 @@ def sync_es() -> None:
 def optimize_delta() -> None:
     from data_integration_pipeline.silver.jobs.optimize_delta_tables import OptimizeDeltaTablesJob
 
-    logger.info('Running CLI command: optimize-delta')
     OptimizeDeltaTablesJob().run()
 
 
@@ -113,7 +102,6 @@ def optimize_delta() -> None:
 def vacuum_delta() -> None:
     from data_integration_pipeline.silver.jobs.vacuum_delta_tables import VacuumDeltaTablesJob
 
-    logger.info('Running CLI command: vacuum-delta')
     VacuumDeltaTablesJob().run()
 
 
@@ -121,7 +109,6 @@ def vacuum_delta() -> None:
 def pg_report() -> None:
     from data_integration_pipeline.gold.jobs.create_pg_report import CreatePostgresReportJob
 
-    logger.info('Running CLI command: pg-report')
     CreatePostgresReportJob().run()
 
 
@@ -131,7 +118,6 @@ def audit_docs(port: int) -> None:
     import http.server
     import os
 
-    logger.info('Running CLI command: audit-docs')
     docs_dir = os.path.join('tmp', 'audits', 'gx', 'uncommitted', 'data_docs', 'local_site')
     if not os.path.isdir(docs_dir):
         logger.error(f'Data Docs directory not found at {docs_dir}. Run audit-silver first.')
@@ -149,7 +135,7 @@ def audit_docs(port: int) -> None:
 def streamlit(port: int) -> None:
     import subprocess
 
-    logger.info('Running CLI command: streamlit')
+    logger.info(f'Serving streamlit at http://localhost:{port} — Ctrl+C to stop.')
     cmd = [
         'streamlit',
         'run',
@@ -167,23 +153,32 @@ def streamlit(port: int) -> None:
 def load_output_data() -> None:
     from data_integration_pipeline.gold.jobs.load_output_data import LoadOutputDataJob
 
-    logger.info('Running CLI command: load-output-data')
     LoadOutputDataJob().run()
 
 
 @cli.command('pipeline', help='Run the full pipeline sequentially.')
 def pipeline() -> None:
-    download_bronze()
-    upload_bronze()
-    chunk_bronze()
-    process_bronze()
-    load_bronze()
-    integrate_silver()
-    audit_silver()
-    optimize_delta()
-    sync_postgres()
-    sync_es()
-    pg_report()
+    from data_integration_pipeline.bronze.jobs.download_bronze import DownloadBronzeJob
+    from data_integration_pipeline.bronze.jobs.upload_bronze import UploadBronzeJob
+    from data_integration_pipeline.bronze.jobs.chunk_bronze import ChunkBronzeJob
+    from data_integration_pipeline.bronze.jobs.process_bronze import ProcessBronzeJob
+    from data_integration_pipeline.bronze.jobs.load_bronze import LoadBronzeJob
+    from data_integration_pipeline.silver.jobs.integrate_silver import IntegrateSilverJob
+    from data_integration_pipeline.silver.jobs.optimize_delta_tables import OptimizeDeltaTablesJob
+    from data_integration_pipeline.gold.jobs.sync_postgres import SyncPostgresJob
+    from data_integration_pipeline.gold.jobs.sync_elastic_search import SyncOrganizationsElasticsearchJob
+    from data_integration_pipeline.gold.jobs.create_pg_report import CreatePostgresReportJob
+
+    DownloadBronzeJob().run()
+    UploadBronzeJob().run()
+    ChunkBronzeJob().run()
+    ProcessBronzeJob().run()
+    LoadBronzeJob().run()
+    IntegrateSilverJob().run()
+    OptimizeDeltaTablesJob().run()
+    SyncPostgresJob().run()
+    SyncOrganizationsElasticsearchJob().run()
+    CreatePostgresReportJob().run()
 
 
 def main(argv: Sequence[str] | None = None) -> int:

@@ -422,36 +422,39 @@ auditor = [
     { name = "pydantic" },
     { name = "w3lib" },
 ]
-elasticsearch = [
+embedding = [
+    { name = "peft" },
+    { name = "sentence-transformers" },
+    { name = "transformers" },
+]
+er-duckdb = [
     { name = "country-converter" },
     { name = "deltalake" },
+    { name = "duckdb" },
     { name = "elasticsearch" },
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "pydantic" },
     { name = "w3lib" },
 ]
-embedding = [
-    { name = "peft" },
-    { name = "sentence-transformers" },
-    { name = "transformers" },
+er-spark = [
+    { name = "country-converter" },
+    { name = "delta-spark" },
+    { name = "deltalake" },
+    { name = "elasticsearch" },
+    { name = "psycopg", extra = ["binary", "pool"] },
+    { name = "pydantic" },
+    { name = "pyspark" },
+    { name = "w3lib" },
 ]
 models = [
     { name = "country-converter" },
     { name = "pydantic" },
     { name = "w3lib" },
 ]
-spark = [
-    { name = "country-converter" },
-    { name = "delta-spark" },
-    { name = "deltalake" },
-    { name = "psycopg", extra = ["binary", "pool"] },
-    { name = "pydantic" },
-    { name = "pyspark" },
-    { name = "w3lib" },
-]
 storage = [
     { name = "country-converter" },
     { name = "deltalake" },
+    { name = "elasticsearch" },
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "pydantic" },
     { name = "w3lib" },
@@ -477,12 +480,13 @@ requires-dist = [
     { name = "country-converter", marker = "extra == 'models'" },
     { name = "data-integration-pipeline", extras = ["models"], marker = "extra == 'auditor'" },
     { name = "data-integration-pipeline", extras = ["models"], marker = "extra == 'storage'" },
-    { name = "data-integration-pipeline", extras = ["storage"], marker = "extra == 'elasticsearch'" },
-    { name = "data-integration-pipeline", extras = ["storage"], marker = "extra == 'spark'" },
-    { name = "data-integration-pipeline", extras = ["storage", "elasticsearch"], marker = "extra == 'streamlit'" },
-    { name = "delta-spark", marker = "extra == 'spark'" },
+    { name = "data-integration-pipeline", extras = ["storage"], marker = "extra == 'er-duckdb'" },
+    { name = "data-integration-pipeline", extras = ["storage"], marker = "extra == 'er-spark'" },
+    { name = "data-integration-pipeline", extras = ["storage"], marker = "extra == 'streamlit'" },
+    { name = "delta-spark", marker = "extra == 'er-spark'" },
     { name = "deltalake", marker = "extra == 'storage'" },
-    { name = "elasticsearch", marker = "extra == 'elasticsearch'", specifier = ">=8,<9" },
+    { name = "duckdb", marker = "extra == 'er-duckdb'" },
+    { name = "elasticsearch", marker = "extra == 'storage'", specifier = ">=8,<9" },
     { name = "great-expectations", marker = "extra == 'auditor'" },
     { name = "json-stream" },
     { name = "numpy" },
@@ -492,7 +496,7 @@ requires-dist = [
     { name = "psycopg", extras = ["binary", "pool"], marker = "extra == 'storage'" },
     { name = "pyarrow" },
     { name = "pydantic", marker = "extra == 'models'" },
-    { name = "pyspark", marker = "extra == 'spark'" },
+    { name = "pyspark", marker = "extra == 'er-spark'" },
     { name = "retry" },
     { name = "s3fs" },
     { name = "sentence-transformers", marker = "extra == 'embedding'" },
@@ -501,7 +505,7 @@ requires-dist = [
     { name = "uuid6" },
     { name = "w3lib", marker = "extra == 'models'" },
 ]
-provides-extras = ["models", "auditor", "storage", "embedding", "elasticsearch", "spark", "streamlit"]
+provides-extras = ["models", "auditor", "storage", "embedding", "er-spark", "er-duckdb", "streamlit"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=9.0.2" }]
@@ -556,6 +560,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/49/85/12f0a49a7c4ffb70572b6c2ef13c90c88fd190debda93b23f026b25f9634/deprecated-1.3.1.tar.gz", hash = "sha256:b1b50e0ff0c1fddaa5708a2c6b0a6588bb09b892825ab2b214ac9ea9d92a5223", size = 2932523 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/84/d0/205d54408c08b13550c733c4b85429e7ead111c7f0014309637425520a9a/deprecated-1.3.1-py2.py3-none-any.whl", hash = "sha256:597bfef186b6f60181535a29fbe44865ce137a5079f295b479886c82729d5f3f", size = 11298 },
+]
+
+[[package]]
+name = "duckdb"
+version = "1.5.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0c/66/744b4931b799a42f8cb9bc7a6f169e7b8e51195b62b246db407fd90bf15f/duckdb-1.5.2.tar.gz", hash = "sha256:638da0d5102b6cb6f7d47f83d0600708ac1d3cb46c5e9aaabc845f9ba4d69246", size = 18017166 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/f2/e3d742808f138d374be4bb516fade3d1f33749b813650810ab7885cdc363/duckdb-1.5.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:4420b3f47027a7849d0e1815532007f377fa95ee5810b47ea717d35525c12f79", size = 30064879 },
+    { url = "https://files.pythonhosted.org/packages/72/0d/f3dc1cf97e1267ca15e4307d456f96ce583961f0703fd75e62b2ad8d64fa/duckdb-1.5.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:bb42e6ed543902e14eae647850da24103a89f0bc2587dec5601b1c1f213bd2ed", size = 15969327 },
+    { url = "https://files.pythonhosted.org/packages/b1/e0/d5418def53ae4e05a63075705ff44ed5af5a1a5932627eb2b600c5df1c93/duckdb-1.5.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:98c0535cd6d901f61a5ea3c2e26a1fd28482953d794deb183daf568e3aa5dda6", size = 14225107 },
+    { url = "https://files.pythonhosted.org/packages/16/a7/15aaa59dbecc35e9711980fcdbf525b32a52470b32d18ef678193a146213/duckdb-1.5.2-cp313-cp313-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:486c862bf7f163c0110b6d85b3e5c031d224a671cca468f12ebb1d3a348f6b39", size = 19313433 },
+    { url = "https://files.pythonhosted.org/packages/bd/21/d903cc63a5140c822b7b62b373a87dc557e60c29b321dfb435061c5e67cf/duckdb-1.5.2-cp313-cp313-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:70631c847ca918ee710ec874241b00cf9d2e5be90762cbb2a0389f17823c08f7", size = 21429837 },
+    { url = "https://files.pythonhosted.org/packages/e3/0a/b770d1f60c70597302130d6247f418549b7094251a02348fbaf1c7e147ae/duckdb-1.5.2-cp313-cp313-win_amd64.whl", hash = "sha256:52a21823f3fbb52f0f0e5425e20b07391ad882464b955879499b5ff0b45a376b", size = 13107699 },
+    { url = "https://files.pythonhosted.org/packages/d9/cf/e200fe431d700962d1a908d2ce89f53ccee1cc8db260174ae663ba09686b/duckdb-1.5.2-cp313-cp313-win_arm64.whl", hash = "sha256:411ad438bd4140f189a10e7f515781335962c5d18bd07837dc6d202e3985253d", size = 13927646 },
 ]
 
 [[package]]
@@ -670,7 +689,7 @@ wheels = [
 
 [[package]]
 name = "great-expectations"
-version = "1.16.0"
+version = "1.16.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "altair" },
@@ -692,9 +711,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "tzlocal" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e5/06/93f10806cc0348ddac572246f0b06f3d020dd2d78972c0d6b11b30c693b8/great_expectations-1.16.0.tar.gz", hash = "sha256:5358adb3e640513a3a71b87ea0edfc62c7b687cc9e27d2ac4cc874a55a9a8108", size = 36327644 }
+sdist = { url = "https://files.pythonhosted.org/packages/9f/6d/4abc8e2c3474c2440444f63707f7c3cf57e5325bbe68e79d538ea60a64fe/great_expectations-1.16.1.tar.gz", hash = "sha256:fd51af169a3a8c357d5d22dda81cfc1a3865e348a97dd07a3cc673bd840a1bd2", size = 36333168 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9d/3a/b28c8ed3a36cc7c0ee6cff815a7418e0d44e5254ac3ee2f27865753275c0/great_expectations-1.16.0-py3-none-any.whl", hash = "sha256:0dc9485053abf8f5bdf9fbdf60951fe8485606038ea0e7ec192c84fe7d57a949", size = 4951351 },
+    { url = "https://files.pythonhosted.org/packages/cc/2e/c3a5948d27a05836b497ecf80b3062d1ad3ab61c2430388e25950526cbc3/great_expectations-1.16.1-py3-none-any.whl", hash = "sha256:2bc9a554e1587a50557ba1973217e8b4b6c412eeeab3a33400c19660a4d945aa", size = 4951353 },
 ]
 
 [[package]]

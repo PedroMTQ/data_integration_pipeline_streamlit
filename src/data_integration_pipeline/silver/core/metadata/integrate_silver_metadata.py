@@ -5,11 +5,14 @@ from typing import Literal, Optional
 
 
 from data_integration_pipeline.gold.core.metadata.sync_base_metadata import SyncBaseMetadata
-from data_integration_pipeline.settings import METADATA_FILE_NAME, SILVER_DATA_FOLDER
+from data_integration_pipeline.settings import ER_BACKEND_ENGINE, METADATA_FILE_NAME, SILVER_DATA_FOLDER
+
+BackendEngine = Literal['duckdb', 'spark']
 
 
 class IntegrateSilverMetadata(SyncBaseMetadata):
     context: Literal['integrate_silver'] = 'integrate_silver'
+    backend_engine: BackendEngine = ER_BACKEND_ENGINE
     seed_data_source: str
     input_delta_tables: list[str]
     output_delta_table: str
@@ -47,6 +50,7 @@ class IntegrateSilverMetadata(SyncBaseMetadata):
                 for i in [
                     f'{"─" * 60}',
                     f'🧠 Context:\t{self.context}',
+                    f'🔧 Backend engine:\t{self.backend_engine}',
                     f'🚀 Run ID:\t{self.run_id}',
                     f'📂 Input tables:\t{tables_str}',
                     f'ℹ️  Seed data source:\t{self.seed_data_source}',
@@ -66,6 +70,7 @@ class IntegrateSilverMetadata(SyncBaseMetadata):
             for i in [
                 f'{"─" * 60}',
                 f'🧠 Context:\t{self.context}',
+                f'🔧 Backend engine:\t{self.backend_engine}',
                 f'🚀 Run ID:\t{self.run_id}',
                 f'📂 Input tables:\t{tables_str}',
                 f'ℹ️  Seed data source:\t{self.seed_data_source}',
