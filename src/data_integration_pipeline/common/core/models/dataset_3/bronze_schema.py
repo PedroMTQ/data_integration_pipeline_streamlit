@@ -8,6 +8,7 @@ from pydantic import Field, computed_field, model_validator, field_validator
 from data_integration_pipeline.common.core.models.templates.base_models import BaseInnerModel, BaseBronzeSchemaRecord
 from data_integration_pipeline.common.core.models.templates.base_model_embedding import BaseModelEmbedding
 from data_integration_pipeline.common.core.models.templates.base_model_url import BaseModelURL
+from data_integration_pipeline.common.core.models.utils.pydantic_utils import SoftStr
 
 
 class ModelURLs(BaseModelURL):

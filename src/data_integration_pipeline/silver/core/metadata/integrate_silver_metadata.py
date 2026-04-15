@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from typing import Literal, Optional
 
-from pydantic import Field
 
 from data_integration_pipeline.gold.core.metadata.sync_base_metadata import SyncBaseMetadata
 from data_integration_pipeline.settings import METADATA_FILE_NAME, SILVER_DATA_FOLDER

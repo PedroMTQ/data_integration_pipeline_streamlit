@@ -47,12 +47,17 @@ class SyncPostgresJob:
             output_postgres_table=self.OUTPUT_POSTGRES_TABLE,
         )
         postgres_client: PostgresClient = get_db_client(metadata.output_db_backend_config)
+        if not postgres_client.table_exists(self.OUTPUT_POSTGRES_TABLE):
+            logger.info(f'{self.OUTPUT_POSTGRES_TABLE} does not exist, running sync')
+            return True
         output_ts = postgres_client.get_last_commit_timestamp(self.OUTPUT_POSTGRES_TABLE)
         if output_ts is None:
+            logger.info(f'{self.OUTPUT_POSTGRES_TABLE} has no commits, running sync')
             return True
         if input_ts is not None and input_ts > output_ts:
             logger.info(f'{self.INPUT_DELTA_TABLE} has newer commits than {self.OUTPUT_POSTGRES_TABLE}, re-integration needed')
             return True
+        logger.info(f'{self.INPUT_DELTA_TABLE} has older commits than {self.OUTPUT_POSTGRES_TABLE}, skipping sync')
         return False
 
     def get_data_to_process(self) -> Iterable[dict]:

@@ -4,14 +4,11 @@ from typing import Optional
 
 from pydantic import (
     computed_field,
-    field_validator,
 )
 from urllib.parse import urlparse
 from w3lib.url import canonicalize_url
 
 from data_integration_pipeline.common.core.models.templates.base_models import BaseInnerModel
-
-
 
 
 class BaseModelURL(BaseInnerModel):
@@ -40,7 +37,6 @@ class BaseModelURL(BaseInnerModel):
         if len(normalized_request_url) < 5:
             return normalized_request_url
         return normalized_request_url[0:5]
-
 
 
 if __name__ == '__main__':

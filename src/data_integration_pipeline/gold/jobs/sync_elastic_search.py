@@ -8,6 +8,7 @@ from data_integration_pipeline.gold.core.metadata.sync_elastic_search_metadata i
 from data_integration_pipeline.gold.core.sync_elastic_search_processor import SyncElasticSearchProcessor
 from data_integration_pipeline.gold.io import get_db_client
 from data_integration_pipeline.gold.io.postgres_client import PostgresClient
+from data_integration_pipeline.gold.io.elasticsearch_client import ElasticsearchClient
 
 
 class SyncOrganizationsElasticsearchJob:
@@ -42,6 +43,13 @@ class SyncOrganizationsElasticsearchJob:
             output_es_index=self.OUTPUT_ES_INDEX,
         )
         postgres_client: PostgresClient = get_db_client(metadata.input_db_backend_config)
+        if not postgres_client.table_exists(self.INPUT_POSTGRES_TABLE):
+            logger.warning(f'{self.INPUT_POSTGRES_TABLE} does not exist, skipping ES sync')
+            raise ValueError(f'{self.INPUT_POSTGRES_TABLE} does not exist, run "dip sync-postgres" first')
+        es_client: ElasticsearchClient = get_db_client(metadata.output_db_backend_config)
+        if not es_client.index_exists(self.OUTPUT_ES_INDEX):
+            logger.warning(f'{self.OUTPUT_ES_INDEX} does not exist, skipping ES sync')
+            return True
         input_ts = postgres_client.get_last_commit_timestamp(self.INPUT_POSTGRES_TABLE)
         output_ts = self.get_last_commit_timestamp()
         if output_ts is None:

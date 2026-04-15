@@ -69,7 +69,7 @@ The processor in `gold/core/sync_elastic_search_processor.py` handles the Postgr
 | `EMBEDDING_DIMENSIONS` | `256` | Dense vector `dims` in the ES index mapping template |
 | `ELASTICSEARCH_INDEX_NAME` | `integrated_records_v1` | Physical ES index name |
 | `ELASTICSEARCH_INDEX_ALIAS` | `integrated_records` | ES index alias used by the `QueryClient` |
-| `ELASTICSEARCH_NUMBER_OF_SHARDS` | `2` | Shard count in the index template |
+| `ELASTICSEARCH_NUMBER_OF_SHARDS` | `1` | Shard count in the index template (1 since we only have 1 ES node) |
 | `ES_CLIENT_BATCH_SIZE` | `100` | Documents per `streaming_bulk` chunk |
 | `ES_CLIENT_RAISE_ERRORS` | `0` (false) | Whether the bulk helper raises on per-document errors |
 | `ES_MAX_RETRIES` | `10` | Retries on ES bulk write failures |

@@ -135,6 +135,9 @@ class PostgresClient:
             logger.critical(f'Failed to connect to database <{self.__database}> at <{self.__host}:{self.__port}> as <{self.__user}>, exception: {e}')
             raise e
 
+    def table_exists(self, table_name: str) -> bool:
+        return table_name in self.get_database_tables()
+
     def ping(self) -> None:
         try:
             self.db_connection.execute('SELECT 1')
@@ -261,7 +264,7 @@ class PostgresClient:
             cursor.execute(f'SELECT MAX({SYNC_LDTS_COLUMN}) FROM "{table_name}"')
             result = cursor.fetchone()
             if result and result[0]:
-                return datetime.fromisoformat(result[0])
+                return result[0]
         except Exception:
             pass
         finally:
@@ -291,3 +294,9 @@ class PostgresClient:
                 yield meta_model.from_gold_record(row_dict)
         finally:
             cursor.close()
+
+
+if __name__ == '__main__':
+    client = PostgresClient()
+    print(client.table_exists('integrated_records'))
+    print(client.get_database_tables())

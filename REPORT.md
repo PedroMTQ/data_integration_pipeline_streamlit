@@ -23,6 +23,8 @@ The pipeline ingests three JSON datasets, each representing a different facet of
 
 This submission is original work authored by me. It builds on reusable patterns from my earlier public project, [data_integration_pipeline](https://github.com/PedroMTQ/data_integration_pipeline), and has been adapted and extended for this technical assessment.
 
+I didn't  focus too much on the entity resolution (ER) segment as the original datasets lacked features for proper ER, so the section could be expanded much more. Anyhow, this is a complex topic, and very dependant on the source data. If you'd like to check an example of how you can approach this via probabilistic ER, you can check this [link](https://github.com/PedroMTQ/data_integration_pipeline/blob/main/src/data_integration_pipeline/core/entity_resolution/integrated_record.py), where I don't have any canonical entities, instead these are generated through dynamic entity anchors.
+
 
 
 ### Main data outcome
@@ -73,7 +75,17 @@ dip load-output-data
 dip streamlit
 ```
 
-For evaluation, I recommend option 1 or 2. The Airflow path is included to demonstrate orchestration design, but it introduces additional operational overhead for a small demo run.
+For evaluation, I recommend option **1** or 3.
+The Airflow path is included to demonstrate orchestration design, but it introduces additional operational overhead for a small demo run.
+
+**Note that if you go with option 3 and only load the output data, you won't have the delta tables per data set and so the dashboard will not be fully operational**
+You will get these errors:
+```txt
+Could not fetch count for Dataset 1: Generic delta kernel error: No files in log segment
+```
+
+You can still run the search since is depends solely on PG and ES, which are also loaded with `load-output-data`.
+
 
 ### Screenshots
 
@@ -89,6 +101,14 @@ For evaluation, I recommend option 1 or 2. The Airflow path is included to demon
 #### Metadata and logs example:
 
 ![log-example](img/log_example_load.png)
+
+#### Postgres:
+
+![pg-table](img/postgres.png)
+
+#### Elastic:
+
+![es-index](img/elastic.png)
 
 #### Dashboard overview:
 
@@ -143,7 +163,7 @@ For evaluation, I recommend option 1 or 2. The Airflow path is included to demon
 
 - **Postgres-to-ES consistency**: There is no transactional guarantee between Postgres and ES. If the Postgres table is updated while an ES sync is in progress, the ES index may contain a mix of old and new records until the sync completes or is re-run.
 - **Aliases and schemas are not safe to changes**. If the schema of the data changes, we may get silent and non silent errors. Ideally, this would be better supported. The same can be said about schema migration, which is at the moment not supported
-- **Left join means unmatched enrichment records are silently discarded**: If a URL exists in Dataset 2 or 3 but not in Dataset 1 (the seed), that enrichment data is never surfaced. There is no reporting of how many enrichment records went unused.
+- **Left join means unmatched enrichment records are silently discarded**: If a URL exists in Dataset 2 or 3 but not in Dataset 1 (the seed), that enrichment data is never surfaced. There is no reporting of how many enrichment records went unused. This could be improved by adding an ER layer where we score each link and respective merged record, something like [this](https://github.com/PedroMTQ/data_integration_pipeline/blob/main/src/data_integration_pipeline/core/entity_resolution/integrated_record.py).
 - **Synchronous delta loading**: Data loading into delta tables is synchronous per delta table. This could be improved by loading splitting the data into partitions; however this would require data partitioning (I already do so by iso country code and request url). This is feasible, but at this point it just adds complexity.
 - **Pandas for audit dataframe**; I've tried using Duckdb with GX but I believe at this point in time it's not supported. I imagine this would change in the future; but for now we just materialize the audit data with Pandas. This is also one of the reasons why I don't audit the whole data (the other one is that it would take too long...).
 - **Test coverage**: Unit and integration tests exist (`tests/`) but coverage could be expanded, particularly for edge cases and error paths.

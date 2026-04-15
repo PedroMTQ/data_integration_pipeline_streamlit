@@ -61,6 +61,8 @@ make docker-infra-up
 make docker-down
 ```
 
+**Note that when PG,Airflow, and ES are initialized I create a sentinel file to avoid launching the init containers. This speeds up the docker up/down; but note that you may have to remove the tmp/compose_init files if you restart the services and change configurations without first running `make docker-reset`**
+
 ### Service UIs
 
 | Service | URL | User | Password |

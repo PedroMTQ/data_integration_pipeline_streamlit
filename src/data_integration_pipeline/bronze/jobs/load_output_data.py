@@ -72,6 +72,13 @@ class LoadOutputDataJob:
         SyncPostgresJob().run()
 
     @staticmethod
+    def _run_pg_report() -> None:
+        from data_integration_pipeline.gold.jobs.create_pg_report import CreatePostgresReportJob
+
+        logger.info('Running pg-report...')
+        CreatePostgresReportJob().run()
+
+    @staticmethod
     def _run_sync_es() -> None:
         from data_integration_pipeline.gold.jobs.sync_elastic_search import SyncOrganizationsElasticsearchJob
 
@@ -86,6 +93,7 @@ class LoadOutputDataJob:
         self._extract_zip(zip_path, extract_dir)
         self._upload_delta_table(extract_dir)
         self._run_sync_pg()
+        self._run_pg_report()
         self._run_sync_es()
 
         logger.info('LoadOutputDataJob complete.')

@@ -99,6 +99,8 @@ When debugging stale UI data:
 1. Re-run source jobs (`dip sync-pg`, `dip sync-es`, `dip pg-report`)
 2. Wait for cache TTL to expire, or restart Streamlit
 
+**Note that the embeddings model is loaded lazily, and so the firt you run a semantic search, the results will take some time to load! Posterior searches will be immediate**
+
 ## Operational checklist
 
 Before using the dashboard end-to-end, ensure:

@@ -3,7 +3,6 @@ from pydantic import (
     AfterValidator,
     HttpUrl,
     NonNegativeInt,
-    PlainValidator,
     TypeAdapter,
     ValidationError,
     ValidationInfo,
@@ -26,7 +25,7 @@ _HTTP_URL_ADAPTER = TypeAdapter(HttpUrl)
 def empty_non_valid(value: Any, handler: ValidatorFunctionWrapHandler, info: ValidationInfo) -> Any:
     try:
         return handler(value)
-    except (ValidationError, ValueError, TypeError) as e:
+    except (ValidationError, ValueError, TypeError):
         return handler(None)
 
 

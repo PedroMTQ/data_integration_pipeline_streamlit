@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from typing import Optional
 
-from pydantic import Field
 
 from data_integration_pipeline.gold.core.metadata.db_backend_config import PostgresBackendConfig
 from data_integration_pipeline.gold.core.metadata.sync_base_metadata import SyncBaseMetadata
