@@ -165,7 +165,7 @@ def streamlit(port: int) -> None:
 
 @cli.command('load-output-data', help='[DEV] Load output data from the S3 bucket to the tmp folder and load into Minio, PG, and ES.')
 def load_output_data() -> None:
-    from data_integration_pipeline.bronze.jobs.load_output_data import LoadOutputDataJob
+    from data_integration_pipeline.gold.jobs.load_output_data import LoadOutputDataJob
 
     logger.info('Running CLI command: load-output-data')
     LoadOutputDataJob().run()
