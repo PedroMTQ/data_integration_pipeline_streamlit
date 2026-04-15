@@ -4,12 +4,12 @@ An end-to-end data integration pipeline that ingests company data from three het
 
 ## Documentation
 
-Full documentation is available **[here](https://pedromtq.github.io/data_integration_pipeline_comp/)** and covers:
+Full documentation is available **[here](https://pedromtq.github.io/data_integration_pipeline_streamlit/)** and covers:
 
-- **[Overview](https://pedromtq.github.io/data_integration_pipeline_comp/)** -- architecture, data model, search & retrieval, assumptions
-- **Bronze layer** -- [download](https://pedromtq.github.io/data_integration_pipeline_comp/bronze/download_bronze/), [upload](https://pedromtq.github.io/data_integration_pipeline_comp/bronze/upload_bronze/), [chunk](https://pedromtq.github.io/data_integration_pipeline_comp/bronze/chunk_bronze/), [process](https://pedromtq.github.io/data_integration_pipeline_comp/bronze/process_bronze/), [load](https://pedromtq.github.io/data_integration_pipeline_comp/bronze/load_bronze/), [errors](https://pedromtq.github.io/data_integration_pipeline_comp/bronze/list_bronze_errors/)
-- **Silver layer** -- [integrate](https://pedromtq.github.io/data_integration_pipeline_comp/silver/integrate_silver/), [optimize](https://pedromtq.github.io/data_integration_pipeline_comp/silver/optimize_delta_tables/), [vacuum](https://pedromtq.github.io/data_integration_pipeline_comp/silver/vacuum_delta_tables/), [audit](https://pedromtq.github.io/data_integration_pipeline_comp/silver/audit_silver/)
-- **Gold layer** -- [sync Postgres](https://pedromtq.github.io/data_integration_pipeline_comp/gold/sync_postgres/), [sync Elasticsearch](https://pedromtq.github.io/data_integration_pipeline_comp/gold/sync_elastic_search/), [PG report](https://pedromtq.github.io/data_integration_pipeline_comp/gold/create_pg_report/)
+- **[Overview](https://pedromtq.github.io/data_integration_pipeline_streamlit/)** -- architecture, data model, search & retrieval, assumptions
+- **Bronze layer** -- [download](https://pedromtq.github.io/data_integration_pipeline_streamlit/bronze/download_bronze/), [upload](https://pedromtq.github.io/data_integration_pipeline_streamlit/bronze/upload_bronze/), [chunk](https://pedromtq.github.io/data_integration_pipeline_streamlit/bronze/chunk_bronze/), [process](https://pedromtq.github.io/data_integration_pipeline_streamlit/bronze/process_bronze/), [load](https://pedromtq.github.io/data_integration_pipeline_streamlit/bronze/load_bronze/), [errors](https://pedromtq.github.io/data_integration_pipeline_streamlit/bronze/list_bronze_errors/)
+- **Silver layer** -- [integrate](https://pedromtq.github.io/data_integration_pipeline_streamlit/silver/integrate_silver/), [optimize](https://pedromtq.github.io/data_integration_pipeline_streamlit/silver/optimize_delta_tables/), [vacuum](https://pedromtq.github.io/data_integration_pipeline_streamlit/silver/vacuum_delta_tables/), [audit](https://pedromtq.github.io/data_integration_pipeline_streamlit/silver/audit_silver/)
+- **Gold layer** -- [sync Postgres](https://pedromtq.github.io/data_integration_pipeline_streamlit/gold/sync_postgres/), [sync Elasticsearch](https://pedromtq.github.io/data_integration_pipeline_streamlit/gold/sync_elastic_search/), [PG report](https://pedromtq.github.io/data_integration_pipeline_streamlit/gold/create_pg_report/)
 
 
 ## Tech Stack

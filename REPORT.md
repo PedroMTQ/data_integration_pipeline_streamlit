@@ -1,6 +1,6 @@
 # Technical Report
 
-# **[Documentation](https://pedromtq.github.io/data_integration_pipeline_comp/)**
+# **[Documentation](https://pedromtq.github.io/data_integration_pipeline_streamlit/)**
 
 
 ---
@@ -441,5 +441,5 @@ The pipeline is designed for incremental execution — only changed data is proc
 
 ## Architecture
 
-You can find the architecture [here](https://pedromtq.github.io/data_integration_pipeline_comp/#architecture)
+You can find the architecture [here](https://pedromtq.github.io/data_integration_pipeline_streamlit/#architecture)
 
