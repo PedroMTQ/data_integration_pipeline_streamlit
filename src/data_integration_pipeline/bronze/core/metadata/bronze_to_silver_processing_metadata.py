@@ -14,7 +14,7 @@ class BronzeToSilverProcessingMetadata(BaseMetadata):
     context: ClassVar[str] = 'bronze_to_silver'
     input_raw_file: str
     data_source: str
-    chunks_size: str
+    chunks_size: int
     bucket_name: str = DATA_BUCKET
     archived_raw_file: str = None
     raw_chunks: Optional[list[str]] = Field(default_factory=list)
@@ -35,7 +35,7 @@ class BronzeToSilverProcessingMetadata(BaseMetadata):
     def create(
         cls,
         input_raw_file: str,
-        chunks_size: str,
+        chunks_size: int,
         bucket_name: str = DATA_BUCKET,
     ) -> 'BronzeToSilverProcessingMetadata':
         metadata = BaseMetadata()

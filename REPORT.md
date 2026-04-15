@@ -170,7 +170,7 @@ You can still run the search since is depends solely on PG and ES, which are als
 - **Logging and metrics**: Logging needs to be improved (maybe OTEL?) and we also need better metrics exposure, e.g., prometheus scraping metadata files and serving to Grafana, or storing as a view and serving to Superset
 - **Schema registry:** A centralized schema registry would enforce contracts across teams producing and consuming data.
 - **Data catalog:** Integration with a data catalog (DataHub, Amundsen) for discoverability and lineage tracking.
-- **Spark joins overhead**: It seems that Spark adds a lot of overhead and seems quite unstable, and we could do without it. For this amount of data, there is not much of a benefit to using it. 
+- **Spark joins overhead**: It seems that Spark adds a lot of overhead and seems quite unstable, and we could do without it. For this amount of data, there is not much of a benefit to using it. I added Duckdb as an alternative engine, but I need to investigate what is the best option here.
 
 
 
