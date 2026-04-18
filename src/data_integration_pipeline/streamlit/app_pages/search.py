@@ -87,19 +87,19 @@ with st.expander('Filters', expanded=False):
         'Min revenue',
         min_value=0,
         value=None,
-        placeholder='e.g. 1000000',
-        step=1_000_000,
+        placeholder='e.g. 10',
+        step=1,
         key='search_min_revenue',
-        help='Minimum revenue lower bound',
+        help='Minimum revenue lower bound in millions USD',
     )
     search_max_revenue = col6.number_input(
         'Max revenue',
         min_value=0,
         value=None,
-        placeholder='e.g. 100000000',
-        step=1_000_000,
+        placeholder='e.g. 20',
+        step=1,
         key='search_max_revenue',
-        help='Maximum revenue upper bound',
+        help='Maximum revenue upper bound in millions USD',
     )
 
 # ---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ _EXAMPLE_QUERIES: list[tuple[str, SearchFilters]] = [
     ),
     (
         'French biotech — drug discovery, revenue >100M',
-        SearchFilters(query_text='drug discovery', country='france', keywords=['biotech'], min_revenue=100_000_000),
+        SearchFilters(query_text='drug discovery', country='france', keywords=['biotech'], min_revenue=100),
     ),
     (
         'Swedish energy — smart grids',
