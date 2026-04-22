@@ -3,6 +3,7 @@
 import streamlit as st
 from datetime import datetime
 
+from data_integration_pipeline.gold.core.bm25_fields import BM25_TEXT_FIELDS, BM25_TEXT_FIELD_LABELS
 from data_integration_pipeline.gold.io.query_client import SearchFilters, EMBEDDING_FIELDS
 from data_integration_pipeline.common.io.logger import logger
 from data_integration_pipeline.settings import STREAMLIT_CACHE_TTL, ELASTICSEARCH_INDEX_ALIAS
@@ -44,7 +45,7 @@ if not _es_collection_exists():
 # ---------------------------------------------------------------------------
 
 query_text = st.text_input(
-    'Keywords search (BM25)',
+    'BM25 text search',
     placeholder='e.g. fraud detection banking analytics',
     key='search_query_text',
 )
@@ -62,7 +63,6 @@ st.caption('Fill text only for BM25, semantic only for vector search, or both fo
 with st.expander('Filters', expanded=False):
     search_country = st.text_input('Country', key='search_country', placeholder='e.g. Finland, Germany, United States')
     search_iso2_country_code = st.text_input('ISO-2 Country Code', key='search_iso2_country_code', max_chars=2, placeholder='e.g. FI, DE, US')
-    search_keywords = st.text_input('Keywords (comma-separated)', key='search_keywords', placeholder='e.g. healthcare, fintech, biotech')
 
     col1, col2 = st.columns(2)
     search_min_employees = col1.number_input('Min employees', min_value=0, value=None, placeholder='e.g. 50', step=1, key='search_min_employees')
@@ -115,6 +115,16 @@ search_k = st.slider(
     help='Maximum number of final results returned.',
 )
 
+with st.expander('BM25 search options', expanded=False):
+    search_query_text_fields = st.multiselect(
+        'BM25 fields for query_text',
+        options=BM25_TEXT_FIELDS,
+        default=BM25_TEXT_FIELDS,
+        format_func=lambda x: BM25_TEXT_FIELD_LABELS.get(x, x),
+        key='search_query_text_fields',
+        help='Choose which text fields BM25 should search. If none are selected, BM25 text search is disabled.',
+    )
+
 with st.expander('Semantic search options', expanded=False):
     search_num_candidates = st.slider(
         'num_candidates',
@@ -154,33 +164,31 @@ with st.expander('Semantic search options', expanded=False):
 _EXAMPLE_QUERIES: list[tuple[str, SearchFilters]] = [
     (
         'Fintech in Finland — fraud detection banking analytics',
-        SearchFilters(query_text='fraud detection banking analytics', country='finland', keywords=['fintech']),
+        SearchFilters(query_text='fintech fraud detection banking analytics', country='finland'),
     ),
     (
         'German healthcare — >100 employees, founded after 2022, diagnostics patient monitoring',
-        SearchFilters(
-            query_text='diagnostics patient monitoring', country='germany', keywords=['healthcare'], min_employees=100, min_founded_year=2022
-        ),
+        SearchFilters(query_text='healthcare diagnostics patient monitoring', country='germany', min_employees=100, min_founded_year=2022),
     ),
     (
         'French biotech — drug discovery, revenue >100M',
-        SearchFilters(query_text='drug discovery', country='france', keywords=['biotech'], min_revenue=100),
+        SearchFilters(query_text='biotech drug discovery', country='france', min_revenue=100),
     ),
     (
         'Swedish energy — smart grids',
-        SearchFilters(query_text='smart grids renewable forecasting', country='sweden', keywords=['energy']),
+        SearchFilters(query_text='energy smart grids renewable forecasting', country='sweden'),
     ),
     (
         'US tech — data pipelines & observability',
-        SearchFilters(query_text='data pipelines observability infrastructure', iso2_country_code='us', keywords=['technology']),
+        SearchFilters(query_text='technology data pipelines observability infrastructure', iso2_country_code='us'),
     ),
     (
         'Finnish healthcare — before 2005',
-        SearchFilters(query_text='diagnostics', country='finland', keywords=['healthcare'], max_founded_year=2005),
+        SearchFilters(query_text='healthcare diagnostics', country='finland', max_founded_year=2005),
     ),
     (
         'UK telecom — 5G, <20 employees',
-        SearchFilters(query_text='5G analytics', country='united kingdom', keywords=['telecom'], max_employees=20),
+        SearchFilters(query_text='telecom 5G analytics', country='united kingdom', max_employees=20),
     ),
 ]
 
@@ -218,7 +226,7 @@ def _apply_example(filters: SearchFilters) -> None:
     st.session_state['search_semantic_query'] = f.get('semantic_query') or ''
     st.session_state['search_country'] = f.get('country') or ''
     st.session_state['search_iso2_country_code'] = f.get('iso2_country_code') or ''
-    st.session_state['search_keywords'] = ', '.join(f.get('keywords') or [])
+    st.session_state['search_query_text_fields'] = f.get('query_text_fields') or BM25_TEXT_FIELDS
     st.session_state['search_min_employees'] = f.get('min_employees') or None
     st.session_state['search_max_employees'] = f.get('max_employees') or None
     st.session_state['search_min_founded_year'] = f.get('min_founded_year') or None
@@ -245,18 +253,17 @@ with st.expander('Example queries', expanded=False):
 # ---------------------------------------------------------------------------
 
 _IGNORED_FILTER_FIELDS = {'k', 'num_candidates', 'embedding_fields'}
-
-parsed_keywords = [k.strip() for k in search_keywords.split(',') if k.strip()] if search_keywords else None
+selected_query_text_fields = search_query_text_fields
 
 active_filters = SearchFilters(
     k=search_k,
     query_text=query_text or None,
+    query_text_fields=selected_query_text_fields if query_text else None,
     semantic_query=semantic_query or None,
     embedding_fields=search_embedding_fields if semantic_query and search_embedding_fields else None,
     num_candidates=search_num_candidates,
     country=search_country or None,
     iso2_country_code=search_iso2_country_code.upper() if search_iso2_country_code else None,
-    keywords=parsed_keywords,
     min_employees=search_min_employees,
     max_employees=search_max_employees,
     min_founded_year=search_min_founded_year,
@@ -266,6 +273,10 @@ active_filters = SearchFilters(
 )
 size = search_k
 
+bm25_disabled_with_query_text = bool(query_text) and selected_query_text_fields == []
+if bm25_disabled_with_query_text and not semantic_query:
+    st.warning('BM25 text search is disabled because no BM25 fields are selected. Select at least one BM25 field or provide a semantic query.')
+    st.stop()
 
 if not bool(active_filters):
     st.info('Enter a search query, semantic query, or apply filters to find companies.')

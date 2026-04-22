@@ -8,21 +8,11 @@ from pydantic import BaseModel, Field, model_validator
 from functools import cached_property
 
 from data_integration_pipeline.common.core.models.templates.base_models import BaseGoldSchemaRecord
+from data_integration_pipeline.gold.core.bm25_fields import BM25_TEXT_FIELDS
 from data_integration_pipeline.gold.io.elasticsearch_client import ElasticsearchClient
 from data_integration_pipeline.gold.io.postgres_client import PostgresClient
 
 TABLE_NAME = 'integrated_records'
-
-_DEFAULT_TEXT_FIELDS = [
-    # sets description_short^2 to boost relevance of short description
-    'description_short^2',
-    'description_long',
-    # adds industry, product_services, market_niches, business_model to the search
-    'industry',
-    'product_services',
-    'market_niches^2',
-    'business_model^2',
-]
 
 EMBEDDING_FIELDS = [
     'embedding_global_vector',
@@ -48,6 +38,10 @@ class SearchFilters(BaseModel):
     query_text: Optional[str] = Field(
         default=None, description='Free-text search query matched against description, industry, products, niches, and business model'
     )
+    query_text_fields: Optional[list[str]] = Field(
+        default=None,
+        description=f'BM25 target fields for query_text. Defaults to all text fields when omitted. Valid values: {", ".join(BM25_TEXT_FIELDS)}',
+    )
 
     # --- semantic / vector search ---
     semantic_query: Optional[str] = Field(
@@ -70,9 +64,6 @@ class SearchFilters(BaseModel):
     company_id: Optional[str] = Field(default=None, description='Exact company ID filter')
     normalized_request_url: Optional[str] = Field(default=None, description='Exact normalized URL filter')
 
-    # --- text match (merged into multi_match should clause) ---
-    keywords: Optional[list[str]] = Field(default=None, description='Keywords to boost relevance, e.g. ["healthcare", "fintech", "biotech"]')
-
     # --- numeric range filters ---
     min_employees: Optional[int] = Field(default=None, description='Minimum number of employees (inclusive)')
     max_employees: Optional[int] = Field(default=None, description='Maximum number of employees (inclusive)')
@@ -83,6 +74,10 @@ class SearchFilters(BaseModel):
 
     @model_validator(mode='after')
     def _validate_embedding_fields(self) -> 'SearchFilters':
+        if self.query_text_fields is not None:
+            invalid = [f for f in self.query_text_fields if f not in BM25_TEXT_FIELDS]
+            if invalid:
+                raise ValueError(f'Invalid query_text_fields: {invalid}. Valid: {BM25_TEXT_FIELDS}')
         if self.embedding_fields is not None:
             invalid = [f for f in self.embedding_fields if f not in EMBEDDING_FIELDS]
             if invalid:
@@ -94,7 +89,7 @@ class SearchFilters(BaseModel):
         return self
 
     def __bool__(self) -> bool:
-        ignored_fields = {'k', 'num_candidates', 'embedding_fields'}
+        ignored_fields = {'k', 'num_candidates', 'embedding_fields', 'query_text_fields'}
         return any(v is not None for field_name, v in self.model_dump().items() if field_name not in ignored_fields)
 
 
@@ -102,7 +97,7 @@ class QueryClient:
     """Two-hop retrieval: ES narrows candidates by relevance, PG returns full records.
 
     Supports BM25 full-text search, semantic (KNN) vector search, and hybrid
-    (BM25 + KNN) — all combinable with structured keyword and range filters.
+    (BM25 + KNN) — all combinable with structured exact-match and range filters.
 
     Usage::
 
@@ -235,7 +230,8 @@ class QueryClient:
         - If both are set: hybrid search (ES merges BM25 + KNN scores).
         - If neither is set: filter-only search (match_all with filters).
 
-        All strategies can be combined with keyword and range filters.
+        BM25 field scope can be controlled via ``query_text_fields``.
+        All strategies can be combined with exact-match and range filters.
         All results are enriched with full PG records.
         """
         filter_clauses = self._build_filter_clauses(filters)
@@ -246,22 +242,18 @@ class QueryClient:
         # --- BM25 text path ---
         bool_query: dict[str, Any] = {}
         if filters.query_text is not None:
-            bool_query['must'] = {
-                'multi_match': {
-                    'query': filters.query_text,
-                    'fields': _DEFAULT_TEXT_FIELDS,
+            bm25_fields = filters.query_text_fields
+            if bm25_fields is None:
+                bm25_fields = BM25_TEXT_FIELDS
+            if bm25_fields:
+                bool_query['must'] = {
+                    'multi_match': {
+                        'query': filters.query_text,
+                        'fields': bm25_fields,
+                    }
                 }
-            }
         elif filters.semantic_query is None:
             bool_query['must'] = {'match_all': {}}
-
-        if filters.keywords:
-            bool_query['should'] = {
-                'multi_match': {
-                    'query': ' '.join(filters.keywords),
-                    'fields': _DEFAULT_TEXT_FIELDS,
-                }
-            }
 
         if filter_clauses and not filters.semantic_query:
             bool_query['filter'] = filter_clauses
@@ -306,14 +298,14 @@ if __name__ == '__main__':
     """
     query_client = QueryClient()
 
-    # --- BM25 text + keyword filter examples ---
+    # --- BM25 text search examples ---
     bm25_filters = [
-        SearchFilters(country='Finland', keywords=['Fintech', 'Fraud detection', 'Banking analytics']),
-        SearchFilters(country='Germany', keywords=['Healthcare', 'Diagnostics', 'Patient monitoring'], min_employees=100, min_founded_year=2022),
-        SearchFilters(country='France', keywords=['Biotech', 'Drug discovery', 'Revenue above 100M'], min_revenue=100_000_000),
-        SearchFilters(country='Sweden', keywords=['Energy', 'Smart grids', 'Renewable forecasting']),
-        SearchFilters(country='US', keywords=['Technology', 'Data pipelines', 'Observability']),
-        SearchFilters(country='UK', keywords=['Telecom', '5G analytics', 'Data pipelines and observability']),
+        SearchFilters(query_text='Fintech fraud detection banking analytics', country='Finland'),
+        SearchFilters(query_text='Healthcare diagnostics patient monitoring', country='Germany', min_employees=100, min_founded_year=2022),
+        SearchFilters(query_text='Biotech drug discovery', country='France', min_revenue=100_000_000),
+        SearchFilters(query_text='Energy smart grids renewable forecasting', country='Sweden'),
+        SearchFilters(query_text='Technology data pipelines observability', country='US'),
+        SearchFilters(query_text='Telecom 5G analytics data pipelines observability', country='UK'),
     ]
 
     # --- Semantic search examples ---

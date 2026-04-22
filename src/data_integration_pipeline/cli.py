@@ -70,7 +70,7 @@ def audit_silver() -> None:
     AuditSilverDataJob().run()
 
 
-@cli.command('integrate-silver', help='Join per-source silver Delta tables into integrated silver Delta table using Spark.')
+@cli.command('integrate-silver', help='Join per-source silver Delta tables into integrated silver Delta table using Duckdb/Spark.')
 def integrate_silver() -> None:
     from data_integration_pipeline.silver.jobs.integrate_silver import IntegrateSilverJob
 

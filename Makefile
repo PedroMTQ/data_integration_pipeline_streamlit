@@ -1,8 +1,9 @@
 SHELL := /bin/bash
 .ONESHELL:
 MAKEFLAGS += --no-print-directory
+.DEFAULT_GOAL := help
 
-.PHONY: install activate update test format check-uv audit docs docs-serve test-connections docker-up docker-down docker-reset streamlit airflow-import
+.PHONY: help install activate update test format check-uv audit docs docs-serve test-connections docker-up docker-down docker-reset streamlit airflow-import
 
 DOCS_DIR := tmp/audits/gx/uncommitted/data_docs/local_site
 DOCS_PORT := 8080
@@ -27,6 +28,29 @@ define SETUP_ENV_VARS
 	ENV["ENV_DIR"]="${HOME}/envs/$${ENV["PACKAGE"]}"
 	ENV["ENV_PATH"]="$${ENV["ENV_DIR"]}/bin/activate"
 endef
+
+help:
+	@printf 'Usage: make <target> (default: help)\n\n'
+	@printf 'Environment (uv)\n'
+	@printf '  check-uv           Verify uv is installed\n'
+	@printf '  install            Create venv and sync dependencies (first-time setup)\n'
+	@printf '  activate           Open a sub-shell with venv and dev .env loaded\n'
+	@printf '  update             Recreate venv and full uv sync (clears uv.lock first)\n'
+	@printf '  test               Run pytest with dev env\n'
+	@printf '  format             Ruff check --fix and format\n\n'
+	@printf 'Docs\n'
+	@printf '  docs               Build MkDocs site (Mermaid assets downloaded as needed)\n'
+	@printf '  docs-serve         mkdocs serve on http://localhost:8000\n\n'
+	@printf 'App / integrations\n'
+	@printf '  test-connections   Run scripts/test_connections.py in the dev venv\n\n'
+	@printf 'Docker (compose uses %s and env file %s)\n' 'docker-compose-*.yaml' '$(DEV_ENV_FILE)'
+	@printf '  docker-build       Build Airflow + repo image\n'
+	@printf '  docker-up          Start Airflow, ES, MinIO, Postgres\n'
+	@printf '  docker-down        Stop those services\n'
+	@printf '  docker-reset       Down with volumes, remove compose init sentinels\n'
+	@printf '  docker-infra-up    Start only ES, MinIO, Postgres\n\n'
+	@printf 'Airflow\n'
+	@printf '  airflow-import     Import connections/variables into running scheduler\n'
 
 
 # --- 0. Requirement Check ---

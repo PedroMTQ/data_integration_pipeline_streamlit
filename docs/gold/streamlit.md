@@ -63,15 +63,13 @@ Single unified search page for BM25, semantic, and hybrid retrieval.
 
 Inputs:
 
-- `Keywords search (BM25)` (`query_text`)
+- `BM25 text search` (`query_text`)
 - `Semantic search` (`semantic_query`)
 - Optional structured filters:
-  - Country / ISO2 / keywords
+  - Country / ISO2
   - Employee range
   - Founded year range
   - Revenue range
-
-
 
 Semantic options:
 
@@ -79,6 +77,14 @@ Semantic options:
 - Embedding mode:
   - `Global` (`embedding_global_vector`)
   - `Per-field` (choose specific embedding fields)
+
+BM25 options:
+
+- `query_text` always uses a BM25 `must` query.
+- You can choose BM25 text fields via **BM25 search options**.
+- The dashboard defaults to all `BM25_TEXT_FIELDS` selected.
+- If no BM25 fields are selected, the BM25 text clause is skipped.
+- If `query_text` is provided while BM25 fields are empty and no semantic query is set, the UI prompts you to select BM25 fields (or use semantic query) instead of running a broad search.
 
 Examples:
 
