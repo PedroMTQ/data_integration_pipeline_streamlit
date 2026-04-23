@@ -1,0 +1,1859 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="End-to-end data integration pipeline documentation">
+      
+      
+      
+      
+      
+        <link rel="next" href="bronze/download_bronze/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Data Integration Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/mermaid-zoom.css?v=1776932972">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pipeline-overview" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="Data Integration Pipeline" class="md-header__button md-logo" aria-label="Data Integration Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Data Integration Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/PedroMTQ/data_integration_pipeline_comp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Data Integration Pipeline" class="md-nav__button md-logo" aria-label="Data Integration Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Data Integration Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/PedroMTQ/data_integration_pipeline_comp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Datasets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#join-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Join Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assumptions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#search-and-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search and Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tech-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tech Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-and-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup and Execution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup and Execution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-uis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service UIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Environment Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connection-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection: S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection: PostgreSQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-elasticsearch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection: Elasticsearch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-spark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection: Spark
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#global-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dashboard-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#job-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Job Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bronze
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bronze
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bronze/download_bronze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download Bronze
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bronze/upload_bronze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Upload Bronze
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bronze/chunk_bronze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chunk Bronze
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bronze/process_bronze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Process Bronze
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bronze/load_bronze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Load Bronze
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bronze/list_bronze_errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List Bronze Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Silver
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Silver
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="silver/integrate_silver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrate Silver
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="silver/optimize_delta_tables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Optimize Delta Tables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="silver/vacuum_delta_tables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vacuum Delta Tables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="silver/audit_silver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Audit Silver
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gold
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gold
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gold/sync_postgres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sync Postgres
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gold/sync_elastic_search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sync Elasticsearch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gold/create_pg_report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create PG Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gold/streamlit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streamlit dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="pipeline-overview">Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Permanent link">&para;</a></h1>
+<p>An end-to-end data integration pipeline that ingests company data from three heterogeneous sources, validates and aligns it through a medallion architecture (Bronze → Silver → Gold), and serves the unified dataset through PostgreSQL (relational queries) and Elasticsearch (full-text and semantic search). Built for production scale, designed to handle hundreds of millions of records with incremental processing, idempotent writes, and resume-on-failure.</p>
+<ul>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#data-model">Data Model</a></li>
+<li><a href="#source-datasets">Source Datasets</a></li>
+<li><a href="#data-formats">Data Formats</a></li>
+<li><a href="#join-strategy">Join Strategy</a></li>
+<li><a href="#assumptions">Assumptions</a></li>
+<li><a href="#search-and-retrieval">Search and Retrieval</a></li>
+<li><a href="#tech-stack">Tech Stack</a></li>
+<li><a href="#setup-and-execution">Setup and Execution</a></li>
+<li><a href="#environment-variables">Environment Variables</a></li>
+<li><a href="#dashboard-documentation">Dashboard Documentation</a></li>
+<li><a href="#cli-reference">CLI Reference</a></li>
+<li><a href="#job-documentation">Job Documentation</a></li>
+<li><a href="#project-structure">Project Structure</a></li>
+</ul>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<div class="mermaid">flowchart LR
+    subgraph sources [Raw Sources]
+        D1["Dataset 1\nCompany Registry"]
+        D2["Dataset 2\nDescriptions Enrichment"]
+        D3["Dataset 3\nEmbeddings"]
+    end
+
+    subgraph bronze [Bronze Layer]
+        S3Raw[S3 Raw Files]
+        Chunk[Chunker]
+        Validate[Pydantic Validator]
+        SilverDelta[Per-Source\nSilver Delta]
+    end
+
+    subgraph silver [Silver Layer]
+        TableJoin[Table Join]
+        IntDelta[Integrated\nDelta Table]
+        GX[Great Expectations\nAudit]
+    end
+
+    subgraph gold [Gold Layer]
+        PG["PostgreSQL\nServing"]
+        ES["Elasticsearch\nSearch"]
+    end
+
+    subgraph query [Query Layer]
+        QC["QueryClient\nTwo-Hop Retrieval"]
+    end
+
+    D1 --&gt; S3Raw
+    D2 --&gt; S3Raw
+    D3 --&gt; S3Raw
+    S3Raw --&gt; Chunk --&gt; Validate --&gt; SilverDelta
+    SilverDelta --&gt; SparkJoin --&gt; IntDelta
+    SilverDelta --&gt; GX
+    IntDelta --&gt; PG
+    PG --&gt; ES
+    ES --&gt;|"candidate hks"| QC
+    QC --&gt;|"full records"| PG</div>
+<p>Data flows left-to-right through four stages:</p>
+<ol>
+<li><strong>Bronze</strong> -- raw files land in S3, get chunked into Parquet pieces, validated row-by-row with Pydantic, and written to per-source Delta tables.</li>
+<li><strong>Silver</strong> -- Duckdb/PySpark joins the three per-source Delta tables on normalized URL into a single integrated Delta table. Great Expectations audits run on sampled data from all four Delta tables using weighted reservoir sampling.</li>
+<li><strong>Gold</strong> -- the integrated Delta table is streamed into PostgreSQL via idempotent upserts (hash-diff change detection). Search-relevant fields are then indexed into Elasticsearch.</li>
+<li><strong>Query</strong> -- a two-hop <code>QueryClient</code> queries ES for candidate record IDs, then fetches full records from PostgreSQL, preserving ES ranking order.</li>
+</ol>
+<h2 id="data-model">Data Model<a class="headerlink" href="#data-model" title="Permanent link">&para;</a></h2>
+<h3 id="source-datasets">Source Datasets<a class="headerlink" href="#source-datasets" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Description</th>
+<th>Primary Key</th>
+<th>Partition Key</th>
+<th>Join Key</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dataset 1</strong></td>
+<td>Company registry -- identifiers, location, industry, financials, founding year</td>
+<td><code>company_id</code></td>
+<td><code>iso2_country_code</code></td>
+<td><code>normalized_request_url</code></td>
+</tr>
+<tr>
+<td><strong>Dataset 2</strong></td>
+<td>URL-keyed text enrichment -- business descriptions, products/services, market niches, business model</td>
+<td><code>normalized_request_url</code></td>
+<td><code>substr(normalized_request_url,5)</code></td>
+<td><code>normalized_request_url</code></td>
+</tr>
+<tr>
+<td><strong>Dataset 3</strong></td>
+<td>URL-keyed embedding vectors -- dense vectors for business description, short description, products, niches, business model</td>
+<td><code>normalized_request_url</code></td>
+<td><code>substr(normalized_request_url,5)</code></td>
+<td><code>normalized_request_url</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-formats">Data Formats<a class="headerlink" href="#data-formats" title="Permanent link">&para;</a></h3>
+<p><strong>Dataset 1</strong> (<code>dataset_1_generated.json</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cmp_000001&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;country&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Finland&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;industry&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fintech&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;revenue_range&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100M-500M&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;employee_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">240</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">&quot;founded_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2018</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">&quot;short_description&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">&quot;website_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;www.nordic-fintech-solutions.ai&quot;</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Dataset 2</strong> (<code>dataset_2_generated.json</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://nordic-fintech-solutions.ai&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;business_description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The company provides software for fraud detection, risk analytics, and digital banking workflows for financial institutions.&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;product_services&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AI underwriting\nFraud detection platform\nRisk monitoring\nBanking analytics dashboards&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">&quot;market_niches&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Digital Banking\nPayments\nFinancial Infrastructure\nFinland&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">&quot;business_model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;B2B | subscription fees | SaaS&quot;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong>Dataset 3</strong> (<code>dataset_3.parquet</code>, originally JSON, replaced with real embeddings generated by <code>jinaai/jina-embeddings-v5-text-nano</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.nordic-fintech-solutions.ai&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;global_emb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.3907</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">&quot;business_description_emb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.3907</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">&quot;product_services_emb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.3907</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">&quot;market_niches_emb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.3907</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">&quot;business_model_emb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.3907</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="nt">&quot;short_description_emb&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.3907</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="nt">&quot;embedding_updated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-10-21T06:52:31Z&quot;</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="join-strategy">Join Strategy<a class="headerlink" href="#join-strategy" title="Permanent link">&para;</a></h3>
+<p>Dataset 1 is the seed (canonical entities). Datasets 2 and 3 are left-joined via <code>normalized_request_url</code>. The gold layer uses a deterministic hash key (<code>hk</code>) derived from the data source name plus <code>company_id</code> as the universal primary key (to avoid ID collision).</p>
+<p>Datasets 2 and 3 are upserted on <code>normalized_request_url</code>. Because URLs are normalized (lowercase, stripped scheme/www/fragment/trailing slash), multiple raw URL variants that point to the same host collapse into a single key. This is intentional -- a <code>normalized_request_url</code> represents an entity.</p>
+<h3 id="assumptions">Assumptions<a class="headerlink" href="#assumptions" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Each entry in Dataset 1 corresponds to a single entity. Entries in Datasets 2 and 3 can map 1:N to entries in Dataset 1 (multiple companies may share the same URL).</li>
+<li>Datasets 2 and 3 are expected to be 1:1 on URL, but this is not enforced. If multiple embedding versions exist per URL (<code>embedding_updated_at</code>), the Delta merge (last-write-wins) retains the latest.</li>
+</ul>
+<h2 id="search-and-retrieval">Search and Retrieval<a class="headerlink" href="#search-and-retrieval" title="Permanent link">&para;</a></h2>
+<p>The <code>QueryClient</code> supports three search strategies, all combinable with structured filters (country, employee count, revenue, founded year, etc.):</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th><code>SearchFilters</code> fields</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>BM25 text search</strong></td>
+<td><code>query_text</code></td>
+<td>ES <code>multi_match</code> across text fields (description, industry, products, niches, business model)</td>
+</tr>
+<tr>
+<td><strong>Semantic search</strong></td>
+<td><code>semantic_query</code></td>
+<td>Query text is embedded at search time via <code>EmbeddingClient</code> (<code>jinaai/jina-embeddings-v5-text-nano</code>), then ES KNN cosine search on one or more <code>dense_vector</code> fields</td>
+</tr>
+<tr>
+<td><strong>Hybrid</strong></td>
+<td><code>query_text</code> + <code>semantic_query</code></td>
+<td>ES combines BM25 and KNN scores in a single request</td>
+</tr>
+</tbody>
+</table>
+<p>Semantic search supports two embedding modes:</p>
+<ul>
+<li><strong>Per-field</strong> — targets individual embedding fields (e.g. search only product/services and market niches embeddings). When multiple fields are selected, ES runs one KNN clause per field and linearly combines their scores. Fields: <code>embedding_description_long</code>, <code>embedding_description_short</code>, <code>embedding_product_services</code>, <code>embedding_market_niches</code>, <code>embedding_business_model</code>.</li>
+<li><strong>Global</strong> — uses a single <code>embedding_global_vector</code> field built by concatenating all non-null text fields into one document before embedding. Useful for broad semantic similarity when you don't need per-field granularity.</li>
+</ul>
+<h2 id="tech-stack">Tech Stack<a class="headerlink" href="#tech-stack" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Language:</strong> Python 3.13</li>
+<li><strong>Data lake:</strong> Delta Lake (<code>deltalake</code> for Python-native reads/writes, <code>delta-spark</code> for PySpark integration)</li>
+<li><strong>Distributed compute:</strong> PySpark (multi-source join at silver layer)</li>
+<li><strong>Serving database:</strong> PostgreSQL 16</li>
+<li><strong>Search engine:</strong> Elasticsearch 8.17 (full-text BM25, dense vector KNN, keyword filters)</li>
+<li><strong>Data validation:</strong> Pydantic v2 (row-level schema enforcement), Great Expectations (statistical audits)</li>
+<li><strong>Data processing:</strong> PyArrow, Polars (sampling and hashing)</li>
+<li><strong>Orchestration:</strong> Apache Airflow 3.2 (CeleryExecutor, Docker task isolation)</li>
+<li><strong>Object storage:</strong> MinIO (S3-compatible, local development)</li>
+<li><strong>Containerization:</strong> Docker Compose (multi-service local environment)</li>
+<li><strong>Package management:</strong> <code>uv</code></li>
+</ul>
+<h2 id="setup-and-execution">Setup and Execution<a class="headerlink" href="#setup-and-execution" title="Permanent link">&para;</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Docker and Docker Compose</li>
+<li><a href="https://docs.astral.sh/uv/">uv</a> (<code>wget -qO- https://astral.sh/uv/install.sh | sh</code>)</li>
+</ul>
+<h3 id="local-environment">Local Environment<a class="headerlink" href="#local-environment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Install Python virtual environment</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>make<span class="w"> </span>install
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Activate the environment (sources dev.env, activates venv)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>make<span class="w"> </span>activate
+</code></pre></div>
+<h3 id="infrastructure">Infrastructure<a class="headerlink" href="#infrastructure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Build the pipeline Docker image and Airflow image</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>make<span class="w"> </span>docker-build
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Start all services (MinIO, PostgreSQL, Elasticsearch, Airflow)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>make<span class="w"> </span>docker-up
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Stop all services</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>make<span class="w"> </span>docker-down
+</code></pre></div>
+<h3 id="running-the-pipeline">Running the Pipeline<a class="headerlink" href="#running-the-pipeline" title="Permanent link">&para;</a></h3>
+<p><strong>Full pipeline (local demo):</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>dip<span class="w"> </span>pipeline
+</code></pre></div>
+<p><strong>Individual stages (in order):</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>dip<span class="w"> </span>download-bronze<span class="w">    </span><span class="c1"># Download test data from public bucket to local filesystem</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>dip<span class="w"> </span>upload-bronze<span class="w">      </span><span class="c1"># Upload test data to S3</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>dip<span class="w"> </span>chunk-bronze<span class="w">       </span><span class="c1"># Chunk raw files into Parquet and archive originals</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>dip<span class="w"> </span>process-bronze<span class="w">     </span><span class="c1"># Validate chunks with Pydantic, write processed Parquet + errors</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>dip<span class="w"> </span>load-bronze<span class="w">        </span><span class="c1"># Write validated data to per-source Silver Delta tables</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>dip<span class="w"> </span>audit-silver<span class="w">       </span><span class="c1"># Run Great Expectations audits on Silver Delta tables</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>dip<span class="w"> </span>integrate-silver<span class="w">   </span><span class="c1"># PySpark join into integrated Delta</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>dip<span class="w"> </span>sync-pg<span class="w">            </span><span class="c1"># Stream integrated Delta to PostgreSQL</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>dip<span class="w"> </span>sync-es<span class="w">            </span><span class="c1"># Index PostgreSQL records into Elasticsearch</span>
+</code></pre></div>
+<p><strong>Maintenance:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>dip<span class="w"> </span>optimize-delta<span class="w">     </span><span class="c1"># Compact Delta table files (Z-order if configured)</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>dip<span class="w"> </span>vacuum-delta<span class="w">       </span><span class="c1"># Remove old Delta file versions beyond retention period</span>
+</code></pre></div>
+<p><strong>Reporting and UIs:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>dip<span class="w"> </span>pg-report<span class="w">          </span><span class="c1"># Create or replace the summary view in Postgres</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>dip<span class="w"> </span>audit-docs<span class="w">         </span><span class="c1"># Serve Great Expectations HTML audit reports (default port 8088)</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>dip<span class="w"> </span>streamlit<span class="w">          </span><span class="c1"># Launch Streamlit data explorer UI (default port 8501)</span>
+</code></pre></div>
+<h3 id="service-uis">Service UIs<a class="headerlink" href="#service-uis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>URL</th>
+<th>User</th>
+<th>Password</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Airflow</td>
+<td>http://localhost:8080</td>
+<td><code>airflow</code></td>
+<td><code>airflow</code></td>
+</tr>
+<tr>
+<td>Kibana (ES)</td>
+<td>http://localhost:5601</td>
+<td><code>elastic</code></td>
+<td><code>elastic123</code></td>
+</tr>
+<tr>
+<td>MinIO Console</td>
+<td>http://localhost:9001</td>
+<td><code>user123</code></td>
+<td><code>password123</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
+<p>All configuration is driven by environment variables, loaded through <code>settings.py</code>. Connection variables are global (used by multiple jobs); task-specific variables are documented in each job's page.</p>
+<h3 id="connection-s3">Connection: S3<a class="headerlink" href="#connection-s3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S3_ACCESS_KEY</code></td>
+<td><em>(required)</em></td>
+<td>S3/MinIO access key</td>
+</tr>
+<tr>
+<td><code>S3_SECRET_ACCESS_KEY</code></td>
+<td><em>(required)</em></td>
+<td>S3/MinIO secret key</td>
+</tr>
+<tr>
+<td><code>S3_HOST</code></td>
+<td><em>(required)</em></td>
+<td>S3/MinIO hostname</td>
+</tr>
+<tr>
+<td><code>S3_PORT</code></td>
+<td><em>(required)</em></td>
+<td>S3/MinIO port</td>
+</tr>
+<tr>
+<td><code>S3_ENDPOINT_URL</code></td>
+<td><code>http://{S3_HOST}:{S3_PORT}</code></td>
+<td>Full endpoint URL (auto-derived from host and port if not set)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-postgresql">Connection: PostgreSQL<a class="headerlink" href="#connection-postgresql" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POSTGRES_HOST</code></td>
+<td><em>(required)</em></td>
+<td>PostgreSQL hostname</td>
+</tr>
+<tr>
+<td><code>POSTGRES_PORT</code></td>
+<td><em>(required)</em></td>
+<td>PostgreSQL port</td>
+</tr>
+<tr>
+<td><code>POSTGRES_USER</code></td>
+<td><em>(required)</em></td>
+<td>PostgreSQL username</td>
+</tr>
+<tr>
+<td><code>POSTGRES_PASSWORD</code></td>
+<td><em>(required)</em></td>
+<td>PostgreSQL password</td>
+</tr>
+<tr>
+<td><code>POSTGRES_DATABASE</code></td>
+<td><em>(required)</em></td>
+<td>PostgreSQL database name</td>
+</tr>
+<tr>
+<td><code>POSTGRES_CONNECTION_TIMEOUT</code></td>
+<td><code>10</code></td>
+<td>Seconds before a Postgres connection attempt times out</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-elasticsearch">Connection: Elasticsearch<a class="headerlink" href="#connection-elasticsearch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ELASTICSEARCH_URL</code></td>
+<td><em>(required)</em></td>
+<td>Elasticsearch URL (e.g. <code>https://localhost:9200</code>)</td>
+</tr>
+<tr>
+<td><code>ELASTICSEARCH_USER</code></td>
+<td><em>(required)</em></td>
+<td>Elasticsearch username</td>
+</tr>
+<tr>
+<td><code>ELASTICSEARCH_PASSWORD</code></td>
+<td><em>(required)</em></td>
+<td>Elasticsearch password</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-spark">Connection: Spark<a class="headerlink" href="#connection-spark" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SPARK_APP_NAME</code></td>
+<td><code>dip-spark</code></td>
+<td>Spark application name</td>
+</tr>
+<tr>
+<td><code>SPARK_HOST</code></td>
+<td><code>127.0.0.1</code></td>
+<td>Spark driver bind address</td>
+</tr>
+<tr>
+<td><code>SPARK_MASTER</code></td>
+<td><code>local[*]</code></td>
+<td>Spark master URL (<code>local[*]</code> for local, cluster URL for distributed)</td>
+</tr>
+<tr>
+<td><code>SPARK_DRIVER_MEMORY</code></td>
+<td><code>4g</code></td>
+<td>Memory allocated to the Spark driver</td>
+</tr>
+<tr>
+<td><code>SPARK_EXECUTOR_MEMORY</code></td>
+<td><code>4g</code></td>
+<td>Memory allocated to each Spark executor</td>
+</tr>
+</tbody>
+</table>
+<h3 id="global-variables">Global Variables<a class="headerlink" href="#global-variables" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEBUG</code></td>
+<td><code>0</code></td>
+<td>Enable debug mode (<code>1</code> = on)</td>
+</tr>
+<tr>
+<td><code>DATA_BUCKET</code></td>
+<td><code>data</code></td>
+<td>S3 bucket used for all pipeline reads, writes, and metadata</td>
+</tr>
+<tr>
+<td><code>LOG_DELAY</code></td>
+<td><code>60</code></td>
+<td>Seconds between periodic metric log messages during streaming jobs</td>
+</tr>
+<tr>
+<td><code>SYNC_METADATA_FREQUENCY</code></td>
+<td><code>600</code></td>
+<td>Seconds between resume-state metadata flushes (bounds re-work after crash)</td>
+</tr>
+<tr>
+<td><code>EMBEDDING_DIMENSIONS</code></td>
+<td><code>256</code></td>
+<td>Dense vector dimensionality used across silver schemas and ES index mappings</td>
+</tr>
+<tr>
+<td><code>EMBEDDING_MODEL_NAME</code></td>
+<td><code>jinaai/jina-embeddings-v5-text-nano</code></td>
+<td>Embedding model used by <code>EmbeddingClient</code> for semantic search</td>
+</tr>
+<tr>
+<td><code>STREAMLIT_CACHE_TTL</code></td>
+<td><code>300</code></td>
+<td>Streamlit resource cache TTL in seconds</td>
+</tr>
+<tr>
+<td><code>HASH_DIFF_COLUMN</code></td>
+<td><code>hdiff</code></td>
+<td>Column name used for merge change-detection in Delta upserts</td>
+</tr>
+<tr>
+<td><code>LOAD_LDTS_COLUMN</code></td>
+<td><code>load_ldts</code></td>
+<td>Timestamp column added to each record on Delta write</td>
+</tr>
+<tr>
+<td><code>SYNC_LDTS_COLUMN</code></td>
+<td><code>sync_ldts</code></td>
+<td>Timestamp column added to each record on PG/ES write</td>
+</tr>
+<tr>
+<td><code>BRONZE_DATA_FOLDER</code></td>
+<td><code>bronze</code></td>
+<td>Local directory name under <code>tests/data/</code> and the S3 key prefix for uploaded files</td>
+</tr>
+<tr>
+<td><code>DEFAULT_CHUNK_SIZE</code></td>
+<td><code>10000</code></td>
+<td>Number of rows per Parquet chunk</td>
+</tr>
+</tbody>
+</table>
+<h2 id="dashboard-documentation">Dashboard Documentation<a class="headerlink" href="#dashboard-documentation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="gold/streamlit/">streamlit dashboard</a> -- page-by-page guide for the Streamlit UI, search behavior, caching, and troubleshooting</li>
+</ul>
+<h2 id="cli-reference">CLI Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dip download-bronze</code></td>
+<td>Download test data from public Hetzner bucket to <code>tests/data/</code></td>
+</tr>
+<tr>
+<td><code>dip upload-bronze</code></td>
+<td>Upload test data from <code>tests/data/</code> to S3 <code>bronze/</code></td>
+</tr>
+<tr>
+<td><code>dip chunk-bronze</code></td>
+<td>Chunk raw bronze files into Parquet and archive originals</td>
+</tr>
+<tr>
+<td><code>dip process-bronze</code></td>
+<td>Validate bronze chunks row-by-row, write processed Parquet + error files</td>
+</tr>
+<tr>
+<td><code>dip load-bronze</code></td>
+<td>Merge processed Parquet chunks into per-source Silver Delta tables</td>
+</tr>
+<tr>
+<td><code>dip list-bronze-errors</code></td>
+<td>Emit JSON report of all validation error files under <code>archived_bronze/</code></td>
+</tr>
+<tr>
+<td><code>dip audit-silver</code></td>
+<td>Run Great Expectations audits on Silver Delta tables</td>
+</tr>
+<tr>
+<td><code>dip integrate-silver</code></td>
+<td>PySpark join of per-source Silver Deltas into integrated Delta</td>
+</tr>
+<tr>
+<td><code>dip sync-pg</code></td>
+<td>Stream integrated Delta into PostgreSQL with idempotent upserts</td>
+</tr>
+<tr>
+<td><code>dip sync-es</code></td>
+<td>Index PostgreSQL records into Elasticsearch</td>
+</tr>
+<tr>
+<td><code>dip optimize-delta</code></td>
+<td>Compact Delta table files (Z-order if configured)</td>
+</tr>
+<tr>
+<td><code>dip vacuum-delta</code></td>
+<td>Remove old Delta file versions beyond retention period</td>
+</tr>
+<tr>
+<td><code>dip pg-report</code></td>
+<td>Create or replace <code>integrated_records_report</code> summary view in Postgres</td>
+</tr>
+<tr>
+<td><code>dip audit-docs</code></td>
+<td>Serve Great Expectations HTML audit reports locally (<code>--port</code>, default 8088)</td>
+</tr>
+<tr>
+<td><code>dip streamlit</code></td>
+<td>Launch Streamlit data exploration UI (<code>--port</code>, default 8501)</td>
+</tr>
+<tr>
+<td><code>dip pipeline</code></td>
+<td>Run the full pipeline end-to-end sequentially</td>
+</tr>
+</tbody>
+</table>
+<h2 id="job-documentation">Job Documentation<a class="headerlink" href="#job-documentation" title="Permanent link">&para;</a></h2>
+<p>Each pipeline job has detailed documentation covering how it works, the core modules it delegates to, metadata models, design reasoning, tradeoffs, and assumptions.</p>
+<p><strong>Bronze layer:</strong></p>
+<ul>
+<li><a href="bronze/download_bronze/">download_bronze</a> -- download test data from public bucket</li>
+<li><a href="bronze/upload_bronze/">upload_bronze</a> -- upload local test data to S3</li>
+<li><a href="bronze/chunk_bronze/">chunk_bronze</a> -- chunk raw files into Parquet, archive originals</li>
+<li><a href="bronze/process_bronze/">process_bronze</a> -- validate and transform chunks with Pydantic</li>
+<li><a href="bronze/load_bronze/">load_bronze</a> -- write processed chunks to Silver Delta tables</li>
+<li><a href="bronze/list_bronze_errors/">list_bronze_errors</a> -- reconciliation report of validation errors</li>
+</ul>
+<p><strong>Silver layer:</strong></p>
+<ul>
+<li><a href="silver/integrate_silver/">integrate_silver</a> -- PySpark multi-source join into integrated Delta</li>
+<li><a href="silver/optimize_delta_tables/">optimize_delta_tables</a> -- compact Delta table files</li>
+<li><a href="silver/vacuum_delta_tables/">vacuum_delta_tables</a> -- remove old Delta file versions</li>
+<li><a href="silver/audit_silver/">audit_silver</a> -- Great Expectations audits with weighted sampling</li>
+</ul>
+<p><strong>Gold layer:</strong></p>
+<ul>
+<li><a href="gold/sync_postgres/">sync_postgres</a> -- stream integrated Delta to PostgreSQL</li>
+<li><a href="gold/sync_elastic_search/">sync_elastic_search</a> -- index PostgreSQL records into Elasticsearch</li>
+<li><a href="gold/create_pg_report/">create_pg_report</a> -- create summary view in PostgreSQL</li>
+</ul>
+<h2 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>src/data_integration_pipeline/
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>├── bronze/                     # Bronze layer: ingestion, validation, Delta writes
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>│   ├── core/                   #   Chunker, Processor, Loader logic
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>│   │   └── metadata/           #   Processing metadata models
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>│   └── jobs/                   #   CLI-callable job orchestrators
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>├── silver/                     # Silver layer: integration, maintenance
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>│   ├── core/                   #   PySpark join processor
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>│   │   └── metadata/           #   Integration/vacuum/optimize metadata
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>│   └── jobs/                   #   Integration, optimize, vacuum jobs
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>├── gold/                       # Gold layer: serving backends
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>│   ├── core/                   #   Postgres sync, ES sync processors
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>│   │   └── metadata/           #   Sync metadata with resume state
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>│   ├── io/                     #   PostgresClient, ElasticsearchClient, QueryClient
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>│   └── schemas/                #   PG DDL (SQL), ES index mapping (Python)
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>├── auditor/                    # Data quality: Great Expectations audits
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>│   ├── core/                   #   Audit runner, rule definitions
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>│   └── io/                     #   Weighted reservoir sampler
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>├── common/                     # Shared infrastructure
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>│   ├── core/                   #   Utilities, hashing, timestamps, timed triggers
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>│   │   └── models/             #   Pydantic data models per source + integrated
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>│   │       ├── dataset_1/      #     Company registry schemas
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>│   │       ├── dataset_2/      #     URL enrichment schemas
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>│   │       ├── dataset_3/      #     Embedding schemas
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>│   │       ├── integrated/     #     Merged schemas (bronze, silver, gold, ES)
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>│   │       ├── templates/      #     Base model classes (Bronze, Silver, Gold, MetaModel)
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>│   │       └── utils/          #     URL normalization, country standardization
+<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>│   └── io/                     #   Delta client, Spark client, S3 storage
+<a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>├── streamlit/                  # Streamlit UI (data explorer, search, quality)
+<a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>├── cli.py                      # CLI entrypoint (argparse, all subcommands)
+<a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>└── settings.py                 # Environment-driven configuration
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "navigation.expand", "content.code.copy", "toc.integrate"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="assets/javascripts/mermaid.min.js"></script>
+      
+        <script src="assets/mermaid-zoom.js?v=1776932972"></script>
+      
+    
+  </body>
+</html>
