@@ -8,7 +8,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from data_integration_pipeline.common.io.logger import logger
 
-from data_integration_pipeline.settings import PARQUET_SUFFIX, S3_ACCESS_KEY, S3_ENDPOINT_URL, S3_SECRET_ACCESS_KEY
+from data_integration_pipeline.settings import PARQUET_SUFFIX
 
 
 class S3FileWriter:
@@ -17,9 +17,6 @@ class S3FileWriter:
         s3_path: str,
         bucket_name: str,
         rows_chunk_size: int = 1000,
-        aws_access_key: str = S3_ACCESS_KEY,
-        aws_secret_access_key: str = S3_SECRET_ACCESS_KEY,
-        s3_endpoint_url: str = S3_ENDPOINT_URL,
     ):
         if not bucket_name:
             raise ValueError('bucket_name must be provided.')

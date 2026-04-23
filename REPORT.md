@@ -145,7 +145,7 @@ You can still run the search since is depends solely on PG and ES, which are als
 - **Audits sampling over full scan**: Auditing every row in a large Delta table would be prohibitively expensive. Reservoir sampling provides statistically representative coverage with a fixed memory and time budget.
 - **Audits weighted sampling**: Using the partition key as the weight column ensures that all geographic regions (or other partitions) are represented in the sample, even if some partitions are much larger than others. This is ideal since we usually want to have samples from every partition, but also need to pay special attention to specific partitions (e.g., the geographical market we are targetting)
 - **Severity-tiered results**: Not all failures are equal. Critical failures (primary key issues) should block the pipeline; warnings (slightly-below-threshold null rates) are informational. This prevents minor data quality issues from halting the entire pipeline.
-- **Spark for record linkage**: The integration step involves multi-table joins that benefit from Spark's distributed execution model, especially as datasets grow. Using Spark here (vs. PyArrow or Polars) provides a natural path to scaling. I'm using the dev/local Spark engine.
+- **Spark for record linkage**: The integration step involves multi-table joins that benefit from Spark's distributed execution model, especially as datasets grow. Using Spark here (vs. PyArrow or Polars) provides a natural path to scaling. I'm using the dev/local Spark engine. Due to instability with the local spark engine and long starting time I later added Duckdb-driven record linkage, which uses the same join criteria as SSpark.
 - **AI-generated docs**: I've used AI to generate the documentation, but note that each documentation file has been reviewed.
 
 
@@ -157,7 +157,7 @@ You can still run the search since is depends solely on PG and ES, which are als
 - **Dataset 2 ↔ Dataset 3 Assumed to be 1:1 on URL**. If multiple embedding versions exist per URL (`embedding_updated_at`), the latest should be used. The current implementation relies on the Delta merge (last-write-wins on the same primary key) to handle this.
 - **File to data model mapping relies on a strict name pattern defined in the `ModelMapper` class**. It also assumes that the respective data models are defined for each data stage (bronze/silver/gold), although not every data stage is required.
 - **Hash keys (primary keys) are deterministic (`utils.py/get_hk`) and derived from the data source name and primary key of the data model**. If either changes, or the hashing mechanism is altered, then hash keys would also be changed. 
-- **Basic entity resolution**: ER is done in a simplistic manner (URL based) but this is not really the case in a real production scenario
+- **Basic entity resolution**: ER is done in a simplistic manner (URL based) but this is not really the case in a more realistic scenario where you integrated different datasets with no clear intersecting primary keys.
 
 ### Potential improvements & issues
 
@@ -170,7 +170,7 @@ You can still run the search since is depends solely on PG and ES, which are als
 - **Logging and metrics**: Logging needs to be improved (maybe OTEL?) and we also need better metrics exposure, e.g., prometheus scraping metadata files and serving to Grafana, or storing as a view and serving to Superset
 - **Schema registry:** A centralized schema registry would enforce contracts across teams producing and consuming data.
 - **Data catalog:** Integration with a data catalog (DataHub, Amundsen) for discoverability and lineage tracking.
-- **Spark joins overhead**: It seems that Spark adds a lot of overhead and seems quite unstable, and we could do without it. For this amount of data, there is not much of a benefit to using it. I added Duckdb as an alternative engine, but I need to investigate what is the best option here.
+- **Spark joins overhead**: It seems that Spark adds a lot of overhead and seems quite unstable, and we could do without it. For this amount of data, there is not much of a benefit to using it. I added Duckdb as an alternative engine, but I'd need to investigate what is the best option here.
 
 
 
@@ -213,7 +213,7 @@ Validated rows are written to per-source Delta tables (`silver/dataset_1/records
 - Time travel enables debugging and rollback.
 - Partition pruning on `iso2_country_code` (Dataset 1) speeds up filtered reads.
 
-**Tradeoff:** Delta adds operational overhead — tables need periodic `OPTIMIZE` (compaction) and `VACUUM` (old file cleanup). These are implemented as scheduled Airflow DAGs (daily).
+**Tradeoff:** Delta adds operational overhead — tables need periodic `OPTIMIZE` (compaction) and `VACUUM` (old file cleanup). These are implemented as jobs which can be triggered through the CLI or via scheduled Airflow DAGs (daily).
 
 ---
 
@@ -224,9 +224,9 @@ Validated rows are written to per-source Delta tables (`silver/dataset_1/records
 
 With the given data, the only feasible way to merge the datasets is via `normalized_request_url`, which can be done trivially through a table join. However, in real scenarios, this is rarely the case, quite often you depend on deterministic features (e.g., IDS, URLs) along natural language features, such as company names, geolocation, etc. For the latter, you cannot simply do table joins as these features often have misspellings, missing tokens, etc; so in this scenario you can proceed with blocking mechanisms to reduce similarity matrices which can then support deterministic (e.g., fuzzy matching) or probabilistic record linking methods.  
 
-### PySpark Multi-Source Join
+### Multi-Source Join
 
-The three per-source Delta tables are joined into a single integrated Delta table using PySpark:
+The three per-source Delta tables are joined into a single integrated Delta table using Duckdb or PySpark:
 
 - **Seed source:** Dataset 1 (company registry) is the left side of the join.
 - **Join key:** `normalized_request_url` — the canonicalized URL shared across all three datasets.
@@ -242,7 +242,7 @@ After the join, a **schema contract check** (`assert_schema_matches`) verifies t
 - Spark's Delta Lake connector (`delta-spark`) provides native read/write with full merge semantics.
 - The same Spark job can run on a local `SparkSession` for development and on a cluster in production with no code changes.
 
-**Tradeoff:** PySpark requires a JVM, adds ~10 seconds of startup overhead, and uses more memory than Polars for small datasets. For this assessment's data volume, Polars would be faster. The choice reflects the production intent of the design. (I also wanted to experiment with Spark)
+**Tradeoff:** PySpark requires a JVM, adds ~10 seconds of startup overhead, and uses more memory than Polars for small datasets. For this assessment's data volume, Duckdb/Polars would be faster. The choice reflects the production intent of the design. (I also wanted to experiment with Spark).
 
 ---
 
