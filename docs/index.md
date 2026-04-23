@@ -24,7 +24,7 @@ An end-to-end data integration pipeline that ingests company data from three het
 flowchart LR
     subgraph sources [Raw Sources]
         D1["Dataset 1\nCompany Registry"]
-        D2["Dataset 2\nURL Enrichment"]
+        D2["Dataset 2\nDescriptions Enrichment"]
         D3["Dataset 3\nEmbeddings"]
     end
 
@@ -36,7 +36,7 @@ flowchart LR
     end
 
     subgraph silver [Silver Layer]
-        SparkJoin[PySpark Join]
+        TableJoin[Table Join]
         IntDelta[Integrated\nDelta Table]
         GX[Great Expectations\nAudit]
     end
@@ -65,7 +65,7 @@ flowchart LR
 Data flows left-to-right through four stages:
 
 1. **Bronze** -- raw files land in S3, get chunked into Parquet pieces, validated row-by-row with Pydantic, and written to per-source Delta tables.
-2. **Silver** -- PySpark joins the three per-source Delta tables on normalized URL into a single integrated Delta table. Great Expectations audits run on sampled data from all four Delta tables using weighted reservoir sampling.
+2. **Silver** -- Duckdb/PySpark joins the three per-source Delta tables on normalized URL into a single integrated Delta table. Great Expectations audits run on sampled data from all four Delta tables using weighted reservoir sampling.
 3. **Gold** -- the integrated Delta table is streamed into PostgreSQL via idempotent upserts (hash-diff change detection). Search-relevant fields are then indexed into Elasticsearch.
 4. **Query** -- a two-hop `QueryClient` queries ES for candidate record IDs, then fetches full records from PostgreSQL, preserving ES ranking order.
 
@@ -73,11 +73,11 @@ Data flows left-to-right through four stages:
 
 ### Source Datasets
 
-| Source | Description | Primary Key | Join Key |
-|--------|-------------|-------------|----------|
-| **Dataset 1** | Company registry -- identifiers, location, industry, financials, founding year | `company_id` | `normalized_request_url` |
-| **Dataset 2** | URL-keyed text enrichment -- business descriptions, products/services, market niches, business model | `normalized_request_url` | `normalized_request_url` |
-| **Dataset 3** | URL-keyed embedding vectors -- dense vectors for business description, short description, products, niches, business model | `normalized_request_url` | `normalized_request_url` |
+| Source | Description | Primary Key | Partition Key | Join Key |
+|--------|-------------|-------------|----------|---------|
+| **Dataset 1** | Company registry -- identifiers, location, industry, financials, founding year | `company_id` | `iso2_country_code` | `normalized_request_url` |
+| **Dataset 2** | URL-keyed text enrichment -- business descriptions, products/services, market niches, business model | `normalized_request_url` | `substr(normalized_request_url,5)`| `normalized_request_url` |
+| **Dataset 3** | URL-keyed embedding vectors -- dense vectors for business description, short description, products, niches, business model | `normalized_request_url` | `substr(normalized_request_url,5)` | `normalized_request_url` |
 
 ### Data Formats
 
@@ -125,7 +125,7 @@ Data flows left-to-right through four stages:
 
 ### Join Strategy
 
-Dataset 1 is the seed (canonical entities). Datasets 2 and 3 are left-joined via `normalized_request_url`. The gold layer uses a deterministic hub key (`hk`) derived from `company_id` as the universal primary key.
+Dataset 1 is the seed (canonical entities). Datasets 2 and 3 are left-joined via `normalized_request_url`. The gold layer uses a deterministic hash key (`hk`) derived from the data source name plus `company_id` as the universal primary key (to avoid ID collision).
 
 Datasets 2 and 3 are upserted on `normalized_request_url`. Because URLs are normalized (lowercase, stripped scheme/www/fragment/trailing slash), multiple raw URL variants that point to the same host collapse into a single key. This is intentional -- a `normalized_request_url` represents an entity.
 
@@ -133,7 +133,6 @@ Datasets 2 and 3 are upserted on `normalized_request_url`. Because URLs are norm
 
 - Each entry in Dataset 1 corresponds to a single entity. Entries in Datasets 2 and 3 can map 1:N to entries in Dataset 1 (multiple companies may share the same URL).
 - Datasets 2 and 3 are expected to be 1:1 on URL, but this is not enforced. If multiple embedding versions exist per URL (`embedding_updated_at`), the Delta merge (last-write-wins) retains the latest.
-- Embeddings are only re-generated when the underlying text in Dataset 2 changes or the embedding model is updated.
 
 ## Search and Retrieval
 
@@ -283,7 +282,7 @@ All configuration is driven by environment variables, loaded through `settings.p
 | `SPARK_DRIVER_MEMORY` | `4g` | Memory allocated to the Spark driver |
 | `SPARK_EXECUTOR_MEMORY` | `4g` | Memory allocated to each Spark executor |
 
-### Global Pipeline Variables
+### Global Variables
 
 | Variable | Default | Description |
 |---|---|---|
